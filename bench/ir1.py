@@ -56,8 +56,8 @@ TINY_SIZES = {   # for the emulator dry run only
 # ratio is the range of the fraction of a donor's cells that each pseudo-bulk samples.
 CASES = [
     dict(name="one warp (gather)", genes=1, cells=200, donors=1, K=30, density=0.6, sb=32, gb=32),
-    dict(name="one warp (scatter)", genes=24, cells=60, donors=1, K=1, density=0.3, sb=32, gb=1024),
-    dict(name="one block, several warps", genes=32, cells=300, donors=1, K=1, density=0.3, sb=256, gb=1024),
+    dict(name="one warp (scatter)", genes=24, cells=60, donors=1, K=1, density=0.3, sb=32, gb=512),
+    dict(name="one block, several warps", genes=16, cells=300, donors=1, K=1, density=0.3, sb=256, gb=512),
     dict(name="several blocks, last one partial", genes=7, cells=500, donors=3, K=5, density=0.2, sb=256, gb=128),
     dict(name="K = 32, every mask bit used", genes=6, cells=400, donors=2, K=32, density=0.3, sb=256, gb=128),
     dict(name="every cell selected", genes=6, cells=300, donors=2, K=30, density=0.3, sb=256, gb=128,
@@ -101,7 +101,7 @@ def random_cases(n, seed=2026, big=False):
         out.append(dict(name=f"random {i}", genes=genes, donors=donors, K=int(rng.integers(1, 33)),
                         cells=int(rng.integers(donors, 3000 if big else 400)),
                         density=float(rng.uniform(0.02, 0.9)),
-                        sb=int(rng.choice(blocks)), gb=int(rng.choice(blocks)), seed=int(rng.integers(1 << 30))))
+                        sb=int(rng.choice(blocks)), gb=int(rng.choice(blocks[:-1])), seed=int(rng.integers(1 << 30))))
     return out
 
 

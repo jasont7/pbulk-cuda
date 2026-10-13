@@ -40,6 +40,7 @@ def test_scatter_and_gather_agree_for_any_block_size():
     X = X[:20]
     lay = build_donor_layout(X, S, subject, K=5)
     ref = emu.gather(gather_arrays(lay), 20, lay["n_donors"], 5, block=32)
-    for block in (64, 256, 1024):
-        assert np.array_equal(emu.gather(gather_arrays(lay), 20, lay["n_donors"], 5, block=block), ref)
-        assert np.allclose(emu.scatter(scatter_arrays(X, S), S.shape[0], 20, block=block), ref, rtol=1e-5)
+    # gather stops at 512: a 1024-thread block exceeds the register limit on the device (pbulk/launch.py)
+    for sblock, gblock in ((64, 64), (256, 256), (1024, 512)):
+        assert np.array_equal(emu.gather(gather_arrays(lay), 20, lay["n_donors"], 5, block=gblock), ref)
+        assert np.allclose(emu.scatter(scatter_arrays(X, S), S.shape[0], 20, block=sblock), ref, rtol=1e-5)

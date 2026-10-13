@@ -1,0 +1,3378 @@
+{
+ "schema": 1,
+ "meta": {
+  "backend": "cuda",
+  "data": "synthetic (pbulk.synthetic)",
+  "created_utc": "2026-10-13T19:22:24+00:00",
+  "gpu": {
+   "name": "Tesla T4",
+   "totalGlobalMem": 15637086208,
+   "sharedMemPerBlock": 49152,
+   "regsPerBlock": 65536,
+   "warpSize": 32,
+   "maxThreadsPerBlock": 1024,
+   "maxThreadsDim": [
+    1024,
+    1024,
+    64
+   ],
+   "maxGridSize": [
+    2147483647,
+    65535,
+    65535
+   ],
+   "clockRate": 1590000,
+   "totalConstMem": 65536,
+   "major": 7,
+   "minor": 5,
+   "textureAlignment": 512,
+   "texturePitchAlignment": 32,
+   "multiProcessorCount": 40,
+   "kernelExecTimeoutEnabled": 0,
+   "integrated": 0,
+   "canMapHostMemory": 1,
+   "computeMode": 0,
+   "maxTexture1D": 131072,
+   "maxTexture2D": [
+    131072,
+    65536
+   ],
+   "maxTexture3D": [
+    16384,
+    16384,
+    16384
+   ],
+   "concurrentKernels": 1,
+   "ECCEnabled": 1,
+   "pciBusID": 0,
+   "pciDeviceID": 4,
+   "pciDomainID": 0,
+   "tccDriver": 0,
+   "memoryClockRate": 5001000,
+   "memoryBusWidth": 256,
+   "l2CacheSize": 4194304,
+   "maxThreadsPerMultiProcessor": 1024,
+   "isMultiGpuBoard": 0,
+   "cooperativeLaunch": 1,
+   "cooperativeMultiDeviceLaunch": false,
+   "maxTexture1DMipmap": 32768,
+   "maxTexture1DLayered": [
+    32768,
+    2048
+   ],
+   "maxTexture2DMipmap": [
+    32768,
+    32768
+   ],
+   "maxTexture2DLinear": [
+    131072,
+    65000,
+    2097120
+   ],
+   "maxTexture2DLayered": [
+    32768,
+    32768,
+    2048
+   ],
+   "maxTexture2DGather": [
+    32768,
+    32768
+   ],
+   "maxTexture3DAlt": [
+    8192,
+    8192,
+    32768
+   ],
+   "maxTextureCubemap": 32768,
+   "maxTextureCubemapLayered": [
+    32768,
+    2046
+   ],
+   "maxSurface1D": 32768,
+   "maxSurface1DLayered": [
+    32768,
+    2048
+   ],
+   "maxSurface2D": [
+    131072,
+    65536
+   ],
+   "maxSurface2DLayered": [
+    32768,
+    32768,
+    2048
+   ],
+   "maxSurface3D": [
+    16384,
+    16384,
+    16384
+   ],
+   "maxSurfaceCubemap": 32768,
+   "maxSurfaceCubemapLayered": [
+    32768,
+    2046
+   ],
+   "surfaceAlignment": 512,
+   "asyncEngineCount": 3,
+   "unifiedAddressing": 1,
+   "streamPrioritiesSupported": 1,
+   "globalL1CacheSupported": 1,
+   "localL1CacheSupported": 1,
+   "sharedMemPerMultiprocessor": 65536,
+   "regsPerMultiprocessor": 65536,
+   "managedMemory": 1,
+   "multiGpuBoardGroupID": 0,
+   "hostNativeAtomicSupported": 0,
+   "pageableMemoryAccess": 0,
+   "concurrentManagedAccess": 1,
+   "computePreemptionSupported": 1,
+   "canUseHostPointerForRegisteredMem": 1,
+   "sharedMemPerBlockOptin": 65536,
+   "pageableMemoryAccessUsesHostPageTables": 0,
+   "directManagedMemAccessFromHost": 0,
+   "uuid": "\ufffda\ufffd5\u02d1\ufffd \ufffda\ufffd\ufffd\u0018J'\ufffd",
+   "luid": "",
+   "luidDeviceNodeMask": 0,
+   "persistingL2CacheMaxSize": 0,
+   "maxBlocksPerMultiProcessor": 16,
+   "accessPolicyMaxWindowSize": 0,
+   "reservedSharedMemPerBlock": 0,
+   "deviceOverlap": 1,
+   "maxTexture1DLinear": 268435456,
+   "singleToDoublePrecisionPerfRatio": 32,
+   "cupy": "14.0.1"
+  },
+  "cpu": "Intel(R) Xeon(R) CPU @ 2.00GHz",
+  "cpu_count": 2,
+  "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+  "python": "3.13.15",
+  "numpy": "2.1.3",
+  "scipy": "1.16.3",
+  "threads_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  },
+  "cpp_flags": [
+   "-O3",
+   "-std=c++17",
+   "-shared",
+   "-fPIC"
+  ],
+  "kernels_sha256": "ec195c65e9907a3b388ef11ddc294016c89ce4c374882152036f3a9650f719e5"
+ },
+ "errors": [],
+ "correctness": {
+  "cases": [
+   {
+    "name": "one warp (gather)",
+    "integer": false,
+    "nnz": 110,
+    "genes": 1,
+    "cells": 200,
+    "donors": 1,
+    "K": 30,
+    "density": 0.6,
+    "scatter": {
+     "grid": 30,
+     "block": 32,
+     "warps": 30,
+     "threads": 960,
+     "regime": "several blocks",
+     "max_rel_err": 1.7222641969606312e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1,
+     "block": 32,
+     "warps": 1,
+     "threads": 32,
+     "pairs": 1,
+     "regime": "one warp",
+     "max_rel_err": 1.193593056413703e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "one warp (gather)",
+    "integer": true,
+    "nnz": 110,
+    "genes": 1,
+    "cells": 200,
+    "donors": 1,
+    "K": 30,
+    "density": 0.6,
+    "scatter": {
+     "grid": 30,
+     "block": 32,
+     "warps": 30,
+     "threads": 960,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1,
+     "block": 32,
+     "warps": 1,
+     "threads": 32,
+     "pairs": 1,
+     "regime": "one warp",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "one warp (scatter)",
+    "integer": false,
+    "nnz": 414,
+    "genes": 24,
+    "cells": 60,
+    "donors": 1,
+    "K": 1,
+    "density": 0.3,
+    "scatter": {
+     "grid": 1,
+     "block": 32,
+     "warps": 1,
+     "threads": 32,
+     "regime": "one warp",
+     "max_rel_err": 1.076980592364996e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 2,
+     "block": 512,
+     "warps": 32,
+     "threads": 1024,
+     "pairs": 24,
+     "regime": "several blocks",
+     "max_rel_err": 8.406229587748133e-08,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "one warp (scatter)",
+    "integer": true,
+    "nnz": 414,
+    "genes": 24,
+    "cells": 60,
+    "donors": 1,
+    "K": 1,
+    "density": 0.3,
+    "scatter": {
+     "grid": 1,
+     "block": 32,
+     "warps": 1,
+     "threads": 32,
+     "regime": "one warp",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 2,
+     "block": 512,
+     "warps": 32,
+     "threads": 1024,
+     "pairs": 24,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "one block, several warps",
+    "integer": false,
+    "nnz": 1435,
+    "genes": 16,
+    "cells": 300,
+    "donors": 1,
+    "K": 1,
+    "density": 0.3,
+    "scatter": {
+     "grid": 1,
+     "block": 256,
+     "warps": 8,
+     "threads": 256,
+     "regime": "one block, several warps",
+     "max_rel_err": 2.150494423523295e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1,
+     "block": 512,
+     "warps": 16,
+     "threads": 512,
+     "pairs": 16,
+     "regime": "one block, several warps",
+     "max_rel_err": 9.550482425918858e-08,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "one block, several warps",
+    "integer": true,
+    "nnz": 1435,
+    "genes": 16,
+    "cells": 300,
+    "donors": 1,
+    "K": 1,
+    "density": 0.3,
+    "scatter": {
+     "grid": 1,
+     "block": 256,
+     "warps": 8,
+     "threads": 256,
+     "regime": "one block, several warps",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1,
+     "block": 512,
+     "warps": 16,
+     "threads": 512,
+     "pairs": 16,
+     "regime": "one block, several warps",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "several blocks, last one partial",
+    "integer": false,
+    "nnz": 727,
+    "genes": 7,
+    "cells": 500,
+    "donors": 3,
+    "K": 5,
+    "density": 0.2,
+    "scatter": {
+     "grid": 15,
+     "block": 256,
+     "warps": 120,
+     "threads": 3840,
+     "regime": "several blocks",
+     "max_rel_err": 1.9807704806915963e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 6,
+     "block": 128,
+     "warps": 24,
+     "threads": 768,
+     "pairs": 21,
+     "regime": "several blocks",
+     "max_rel_err": 9.830825898203089e-08,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "several blocks, last one partial",
+    "integer": true,
+    "nnz": 727,
+    "genes": 7,
+    "cells": 500,
+    "donors": 3,
+    "K": 5,
+    "density": 0.2,
+    "scatter": {
+     "grid": 15,
+     "block": 256,
+     "warps": 120,
+     "threads": 3840,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 6,
+     "block": 128,
+     "warps": 24,
+     "threads": 768,
+     "pairs": 21,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "K = 32, every mask bit used",
+    "integer": false,
+    "nnz": 725,
+    "genes": 6,
+    "cells": 400,
+    "donors": 2,
+    "K": 32,
+    "density": 0.3,
+    "scatter": {
+     "grid": 64,
+     "block": 256,
+     "warps": 512,
+     "threads": 16384,
+     "regime": "several blocks",
+     "max_rel_err": 2.6067852162551447e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 3,
+     "block": 128,
+     "warps": 12,
+     "threads": 384,
+     "pairs": 12,
+     "regime": "several blocks",
+     "max_rel_err": 1.1868386186699233e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "K = 32, every mask bit used",
+    "integer": true,
+    "nnz": 725,
+    "genes": 6,
+    "cells": 400,
+    "donors": 2,
+    "K": 32,
+    "density": 0.3,
+    "scatter": {
+     "grid": 64,
+     "block": 256,
+     "warps": 512,
+     "threads": 16384,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 3,
+     "block": 128,
+     "warps": 12,
+     "threads": 384,
+     "pairs": 12,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "every cell selected",
+    "integer": false,
+    "nnz": 527,
+    "genes": 6,
+    "cells": 300,
+    "donors": 2,
+    "K": 30,
+    "density": 0.3,
+    "scatter": {
+     "grid": 60,
+     "block": 256,
+     "warps": 480,
+     "threads": 15360,
+     "regime": "several blocks",
+     "max_rel_err": 1.9673387220508796e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 3,
+     "block": 128,
+     "warps": 12,
+     "threads": 384,
+     "pairs": 12,
+     "regime": "several blocks",
+     "max_rel_err": 6.569174605092456e-08,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "every cell selected",
+    "integer": true,
+    "nnz": 527,
+    "genes": 6,
+    "cells": 300,
+    "donors": 2,
+    "K": 30,
+    "density": 0.3,
+    "scatter": {
+     "grid": 60,
+     "block": 256,
+     "warps": 480,
+     "threads": 15360,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 3,
+     "block": 128,
+     "warps": 12,
+     "threads": 384,
+     "pairs": 12,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "very sparse, empty segments",
+    "integer": false,
+    "nnz": 64,
+    "genes": 16,
+    "cells": 400,
+    "donors": 3,
+    "K": 4,
+    "density": 0.01,
+    "scatter": {
+     "grid": 12,
+     "block": 64,
+     "warps": 24,
+     "threads": 768,
+     "regime": "several blocks",
+     "max_rel_err": 7.330805055962413e-08,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 12,
+     "block": 128,
+     "warps": 48,
+     "threads": 1536,
+     "pairs": 48,
+     "regime": "several blocks",
+     "max_rel_err": 7.330805055962413e-08,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "very sparse, empty segments",
+    "integer": true,
+    "nnz": 64,
+    "genes": 16,
+    "cells": 400,
+    "donors": 3,
+    "K": 4,
+    "density": 0.01,
+    "scatter": {
+     "grid": 12,
+     "block": 64,
+     "warps": 24,
+     "threads": 768,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 12,
+     "block": 128,
+     "warps": 48,
+     "threads": 1536,
+     "pairs": 48,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "dense, segments of exactly 64",
+    "integer": false,
+    "nnz": 640,
+    "genes": 5,
+    "cells": 128,
+    "donors": 2,
+    "K": 3,
+    "density": 1.0,
+    "scatter": {
+     "grid": 6,
+     "block": 256,
+     "warps": 48,
+     "threads": 1536,
+     "regime": "several blocks",
+     "max_rel_err": 1.5635422927806631e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 5,
+     "block": 64,
+     "warps": 10,
+     "threads": 320,
+     "pairs": 10,
+     "regime": "several blocks",
+     "max_rel_err": 7.630459071674378e-08,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "dense, segments of exactly 64",
+    "integer": true,
+    "nnz": 640,
+    "genes": 5,
+    "cells": 128,
+    "donors": 2,
+    "K": 3,
+    "density": 1.0,
+    "scatter": {
+     "grid": 6,
+     "block": 256,
+     "warps": 48,
+     "threads": 1536,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 5,
+     "block": 64,
+     "warps": 10,
+     "threads": 320,
+     "pairs": 10,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "dense, ragged segments",
+    "integer": false,
+    "nnz": 655,
+    "genes": 5,
+    "cells": 131,
+    "donors": 2,
+    "K": 3,
+    "density": 1.0,
+    "scatter": {
+     "grid": 6,
+     "block": 256,
+     "warps": 48,
+     "threads": 1536,
+     "regime": "several blocks",
+     "max_rel_err": 2.435952072131037e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 5,
+     "block": 64,
+     "warps": 10,
+     "threads": 320,
+     "pairs": 10,
+     "regime": "several blocks",
+     "max_rel_err": 9.78396870110007e-08,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "dense, ragged segments",
+    "integer": true,
+    "nnz": 655,
+    "genes": 5,
+    "cells": 131,
+    "donors": 2,
+    "K": 3,
+    "density": 1.0,
+    "scatter": {
+     "grid": 6,
+     "block": 256,
+     "warps": 48,
+     "threads": 1536,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 5,
+     "block": 64,
+     "warps": 10,
+     "threads": 320,
+     "pairs": 10,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "a donor with one cell",
+    "integer": false,
+    "nnz": 343,
+    "genes": 6,
+    "cells": 200,
+    "donors": 3,
+    "K": 4,
+    "density": 0.3,
+    "scatter": {
+     "grid": 12,
+     "block": 128,
+     "warps": 48,
+     "threads": 1536,
+     "regime": "several blocks",
+     "max_rel_err": 1.6477216594061874e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 5,
+     "block": 128,
+     "warps": 20,
+     "threads": 640,
+     "pairs": 18,
+     "regime": "several blocks",
+     "max_rel_err": 1.010306365237707e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "a donor with one cell",
+    "integer": true,
+    "nnz": 343,
+    "genes": 6,
+    "cells": 200,
+    "donors": 3,
+    "K": 4,
+    "density": 0.3,
+    "scatter": {
+     "grid": 12,
+     "block": 128,
+     "warps": 48,
+     "threads": 1536,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 5,
+     "block": 128,
+     "warps": 20,
+     "threads": 640,
+     "pairs": 18,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "long segments",
+    "integer": false,
+    "nnz": 7217,
+    "genes": 2,
+    "cells": 4000,
+    "donors": 2,
+    "K": 8,
+    "density": 0.9,
+    "scatter": {
+     "grid": 16,
+     "block": 512,
+     "warps": 256,
+     "threads": 8192,
+     "regime": "several blocks",
+     "max_rel_err": 1.016918393451562e-06,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 4,
+     "block": 32,
+     "warps": 4,
+     "threads": 128,
+     "pairs": 4,
+     "regime": "several blocks",
+     "max_rel_err": 9.650609311622258e-08,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "long segments",
+    "integer": true,
+    "nnz": 7217,
+    "genes": 2,
+    "cells": 4000,
+    "donors": 2,
+    "K": 8,
+    "density": 0.9,
+    "scatter": {
+     "grid": 16,
+     "block": 512,
+     "warps": 256,
+     "threads": 8192,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 4,
+     "block": 32,
+     "warps": 4,
+     "threads": 128,
+     "pairs": 4,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 0",
+    "integer": false,
+    "nnz": 296818,
+    "genes": 358,
+    "cells": 1921,
+    "donors": 6,
+    "K": 1,
+    "density": 0.43119619300626694,
+    "scatter": {
+     "grid": 6,
+     "block": 32,
+     "warps": 6,
+     "threads": 192,
+     "regime": "several blocks",
+     "max_rel_err": 4.995527982114295e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1074,
+     "block": 64,
+     "warps": 2148,
+     "threads": 68736,
+     "pairs": 2148,
+     "regime": "several blocks",
+     "max_rel_err": 1.3413482913958247e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 0",
+    "integer": true,
+    "nnz": 296818,
+    "genes": 358,
+    "cells": 1921,
+    "donors": 6,
+    "K": 1,
+    "density": 0.43119619300626694,
+    "scatter": {
+     "grid": 6,
+     "block": 32,
+     "warps": 6,
+     "threads": 192,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1074,
+     "block": 64,
+     "warps": 2148,
+     "threads": 68736,
+     "pairs": 2148,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 1",
+    "integer": false,
+    "nnz": 619126,
+    "genes": 1662,
+    "cells": 2114,
+    "donors": 3,
+    "K": 26,
+    "density": 0.1760708088042828,
+    "scatter": {
+     "grid": 78,
+     "block": 1024,
+     "warps": 2496,
+     "threads": 79872,
+     "regime": "several blocks",
+     "max_rel_err": 7.148991479075853e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 312,
+     "block": 512,
+     "warps": 4992,
+     "threads": 159744,
+     "pairs": 4986,
+     "regime": "several blocks",
+     "max_rel_err": 1.5596706161287476e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 1",
+    "integer": true,
+    "nnz": 619126,
+    "genes": 1662,
+    "cells": 2114,
+    "donors": 3,
+    "K": 26,
+    "density": 0.1760708088042828,
+    "scatter": {
+     "grid": 78,
+     "block": 1024,
+     "warps": 2496,
+     "threads": 79872,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 312,
+     "block": 512,
+     "warps": 4992,
+     "threads": 159744,
+     "pairs": 4986,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 2",
+    "integer": false,
+    "nnz": 1436216,
+    "genes": 597,
+    "cells": 2900,
+    "donors": 1,
+    "K": 6,
+    "density": 0.8294681412728049,
+    "scatter": {
+     "grid": 6,
+     "block": 64,
+     "warps": 12,
+     "threads": 384,
+     "regime": "several blocks",
+     "max_rel_err": 1.7900093640315864e-06,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 75,
+     "block": 256,
+     "warps": 600,
+     "threads": 19200,
+     "pairs": 597,
+     "regime": "several blocks",
+     "max_rel_err": 1.3147236347162683e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 2",
+    "integer": true,
+    "nnz": 1436216,
+    "genes": 597,
+    "cells": 2900,
+    "donors": 1,
+    "K": 6,
+    "density": 0.8294681412728049,
+    "scatter": {
+     "grid": 6,
+     "block": 64,
+     "warps": 12,
+     "threads": 384,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 75,
+     "block": 256,
+     "warps": 600,
+     "threads": 19200,
+     "pairs": 597,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 3",
+    "integer": false,
+    "nnz": 189165,
+    "genes": 236,
+    "cells": 1935,
+    "donors": 5,
+    "K": 17,
+    "density": 0.4145748799520908,
+    "scatter": {
+     "grid": 85,
+     "block": 512,
+     "warps": 1360,
+     "threads": 43520,
+     "regime": "several blocks",
+     "max_rel_err": 6.356039404675226e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 295,
+     "block": 128,
+     "warps": 1180,
+     "threads": 37760,
+     "pairs": 1180,
+     "regime": "several blocks",
+     "max_rel_err": 1.5117136366778012e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 3",
+    "integer": true,
+    "nnz": 189165,
+    "genes": 236,
+    "cells": 1935,
+    "donors": 5,
+    "K": 17,
+    "density": 0.4145748799520908,
+    "scatter": {
+     "grid": 85,
+     "block": 512,
+     "warps": 1360,
+     "threads": 43520,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 295,
+     "block": 128,
+     "warps": 1180,
+     "threads": 37760,
+     "pairs": 1180,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 4",
+    "integer": false,
+    "nnz": 182837,
+    "genes": 556,
+    "cells": 679,
+    "donors": 1,
+    "K": 5,
+    "density": 0.48271882214381856,
+    "scatter": {
+     "grid": 5,
+     "block": 32,
+     "warps": 5,
+     "threads": 160,
+     "regime": "several blocks",
+     "max_rel_err": 8.432643538853533e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 139,
+     "block": 128,
+     "warps": 556,
+     "threads": 17792,
+     "pairs": 556,
+     "regime": "several blocks",
+     "max_rel_err": 1.3203297621828991e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 4",
+    "integer": true,
+    "nnz": 182837,
+    "genes": 556,
+    "cells": 679,
+    "donors": 1,
+    "K": 5,
+    "density": 0.48271882214381856,
+    "scatter": {
+     "grid": 5,
+     "block": 32,
+     "warps": 5,
+     "threads": 160,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 139,
+     "block": 128,
+     "warps": 556,
+     "threads": 17792,
+     "pairs": 556,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 5",
+    "integer": false,
+    "nnz": 793635,
+    "genes": 1660,
+    "cells": 1399,
+    "donors": 4,
+    "K": 1,
+    "density": 0.3413591049965044,
+    "scatter": {
+     "grid": 4,
+     "block": 128,
+     "warps": 16,
+     "threads": 512,
+     "regime": "several blocks",
+     "max_rel_err": 6.401059298054457e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 6640,
+     "block": 32,
+     "warps": 6640,
+     "threads": 212480,
+     "pairs": 6640,
+     "regime": "several blocks",
+     "max_rel_err": 1.3773631827975304e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 5",
+    "integer": true,
+    "nnz": 793635,
+    "genes": 1660,
+    "cells": 1399,
+    "donors": 4,
+    "K": 1,
+    "density": 0.3413591049965044,
+    "scatter": {
+     "grid": 4,
+     "block": 128,
+     "warps": 16,
+     "threads": 512,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 6640,
+     "block": 32,
+     "warps": 6640,
+     "threads": 212480,
+     "pairs": 6640,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 6",
+    "integer": false,
+    "nnz": 441288,
+    "genes": 1190,
+    "cells": 1307,
+    "donors": 3,
+    "K": 11,
+    "density": 0.2839925232957319,
+    "scatter": {
+     "grid": 33,
+     "block": 1024,
+     "warps": 1056,
+     "threads": 33792,
+     "regime": "several blocks",
+     "max_rel_err": 6.464180376675353e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1785,
+     "block": 64,
+     "warps": 3570,
+     "threads": 114240,
+     "pairs": 3570,
+     "regime": "several blocks",
+     "max_rel_err": 1.6135803262506872e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 6",
+    "integer": true,
+    "nnz": 441288,
+    "genes": 1190,
+    "cells": 1307,
+    "donors": 3,
+    "K": 11,
+    "density": 0.2839925232957319,
+    "scatter": {
+     "grid": 33,
+     "block": 1024,
+     "warps": 1056,
+     "threads": 33792,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1785,
+     "block": 64,
+     "warps": 3570,
+     "threads": 114240,
+     "pairs": 3570,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 7",
+    "integer": false,
+    "nnz": 984827,
+    "genes": 1914,
+    "cells": 1588,
+    "donors": 6,
+    "K": 26,
+    "density": 0.3236885092272171,
+    "scatter": {
+     "grid": 156,
+     "block": 256,
+     "warps": 1248,
+     "threads": 39936,
+     "regime": "several blocks",
+     "max_rel_err": 6.260585521992701e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 2871,
+     "block": 128,
+     "warps": 11484,
+     "threads": 367488,
+     "pairs": 11484,
+     "regime": "several blocks",
+     "max_rel_err": 1.7769007666156495e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 7",
+    "integer": true,
+    "nnz": 984827,
+    "genes": 1914,
+    "cells": 1588,
+    "donors": 6,
+    "K": 26,
+    "density": 0.3236885092272171,
+    "scatter": {
+     "grid": 156,
+     "block": 256,
+     "warps": 1248,
+     "threads": 39936,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 2871,
+     "block": 128,
+     "warps": 11484,
+     "threads": 367488,
+     "pairs": 11484,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 8",
+    "integer": false,
+    "nnz": 1190669,
+    "genes": 1127,
+    "cells": 1301,
+    "donors": 5,
+    "K": 20,
+    "density": 0.8123956471237155,
+    "scatter": {
+     "grid": 100,
+     "block": 32,
+     "warps": 100,
+     "threads": 3200,
+     "regime": "several blocks",
+     "max_rel_err": 8.400032646608118e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 2818,
+     "block": 64,
+     "warps": 5636,
+     "threads": 180352,
+     "pairs": 5635,
+     "regime": "several blocks",
+     "max_rel_err": 1.598969009314921e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 8",
+    "integer": true,
+    "nnz": 1190669,
+    "genes": 1127,
+    "cells": 1301,
+    "donors": 5,
+    "K": 20,
+    "density": 0.8123956471237155,
+    "scatter": {
+     "grid": 100,
+     "block": 32,
+     "warps": 100,
+     "threads": 3200,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 2818,
+     "block": 64,
+     "warps": 5636,
+     "threads": 180352,
+     "pairs": 5635,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 9",
+    "integer": false,
+    "nnz": 125210,
+    "genes": 824,
+    "cells": 239,
+    "donors": 5,
+    "K": 11,
+    "density": 0.6367399827607528,
+    "scatter": {
+     "grid": 55,
+     "block": 64,
+     "warps": 110,
+     "threads": 3520,
+     "regime": "several blocks",
+     "max_rel_err": 3.584919034730217e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1030,
+     "block": 128,
+     "warps": 4120,
+     "threads": 131840,
+     "pairs": 4120,
+     "regime": "several blocks",
+     "max_rel_err": 1.6324579900663745e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 9",
+    "integer": true,
+    "nnz": 125210,
+    "genes": 824,
+    "cells": 239,
+    "donors": 5,
+    "K": 11,
+    "density": 0.6367399827607528,
+    "scatter": {
+     "grid": 55,
+     "block": 64,
+     "warps": 110,
+     "threads": 3520,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1030,
+     "block": 128,
+     "warps": 4120,
+     "threads": 131840,
+     "pairs": 4120,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 10",
+    "integer": false,
+    "nnz": 318997,
+    "genes": 986,
+    "cells": 1741,
+    "donors": 4,
+    "K": 16,
+    "density": 0.18623760098392342,
+    "scatter": {
+     "grid": 64,
+     "block": 32,
+     "warps": 64,
+     "threads": 2048,
+     "regime": "several blocks",
+     "max_rel_err": 5.848616931844062e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 493,
+     "block": 256,
+     "warps": 3944,
+     "threads": 126208,
+     "pairs": 3944,
+     "regime": "several blocks",
+     "max_rel_err": 1.7051046236312426e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 10",
+    "integer": true,
+    "nnz": 318997,
+    "genes": 986,
+    "cells": 1741,
+    "donors": 4,
+    "K": 16,
+    "density": 0.18623760098392342,
+    "scatter": {
+     "grid": 64,
+     "block": 32,
+     "warps": 64,
+     "threads": 2048,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 493,
+     "block": 256,
+     "warps": 3944,
+     "threads": 126208,
+     "pairs": 3944,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 11",
+    "integer": false,
+    "nnz": 37684,
+    "genes": 902,
+    "cells": 107,
+    "donors": 4,
+    "K": 20,
+    "density": 0.3897700687301578,
+    "scatter": {
+     "grid": 80,
+     "block": 128,
+     "warps": 320,
+     "threads": 10240,
+     "regime": "several blocks",
+     "max_rel_err": 2.2054142924830454e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 451,
+     "block": 256,
+     "warps": 3608,
+     "threads": 115456,
+     "pairs": 3608,
+     "regime": "several blocks",
+     "max_rel_err": 1.5061372255918518e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 11",
+    "integer": true,
+    "nnz": 37684,
+    "genes": 902,
+    "cells": 107,
+    "donors": 4,
+    "K": 20,
+    "density": 0.3897700687301578,
+    "scatter": {
+     "grid": 80,
+     "block": 128,
+     "warps": 320,
+     "threads": 10240,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 451,
+     "block": 256,
+     "warps": 3608,
+     "threads": 115456,
+     "pairs": 3608,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 12",
+    "integer": false,
+    "nnz": 1005943,
+    "genes": 940,
+    "cells": 2028,
+    "donors": 6,
+    "K": 2,
+    "density": 0.5279162039566553,
+    "scatter": {
+     "grid": 12,
+     "block": 1024,
+     "warps": 384,
+     "threads": 12288,
+     "regime": "several blocks",
+     "max_rel_err": 7.255886236201593e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1410,
+     "block": 128,
+     "warps": 5640,
+     "threads": 180480,
+     "pairs": 5640,
+     "regime": "several blocks",
+     "max_rel_err": 1.4419816649476338e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 12",
+    "integer": true,
+    "nnz": 1005943,
+    "genes": 940,
+    "cells": 2028,
+    "donors": 6,
+    "K": 2,
+    "density": 0.5279162039566553,
+    "scatter": {
+     "grid": 12,
+     "block": 1024,
+     "warps": 384,
+     "threads": 12288,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1410,
+     "block": 128,
+     "warps": 5640,
+     "threads": 180480,
+     "pairs": 5640,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 13",
+    "integer": false,
+    "nnz": 62756,
+    "genes": 78,
+    "cells": 2620,
+    "donors": 1,
+    "K": 26,
+    "density": 0.3073593041539176,
+    "scatter": {
+     "grid": 26,
+     "block": 256,
+     "warps": 208,
+     "threads": 6656,
+     "regime": "several blocks",
+     "max_rel_err": 1.607804116053348e-06,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 10,
+     "block": 256,
+     "warps": 80,
+     "threads": 2560,
+     "pairs": 78,
+     "regime": "several blocks",
+     "max_rel_err": 1.2214556054432016e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 13",
+    "integer": true,
+    "nnz": 62756,
+    "genes": 78,
+    "cells": 2620,
+    "donors": 1,
+    "K": 26,
+    "density": 0.3073593041539176,
+    "scatter": {
+     "grid": 26,
+     "block": 256,
+     "warps": 208,
+     "threads": 6656,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 10,
+     "block": 256,
+     "warps": 80,
+     "threads": 2560,
+     "pairs": 78,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 14",
+    "integer": false,
+    "nnz": 452297,
+    "genes": 187,
+    "cells": 2714,
+    "donors": 2,
+    "K": 6,
+    "density": 0.8909678274743631,
+    "scatter": {
+     "grid": 12,
+     "block": 128,
+     "warps": 48,
+     "threads": 1536,
+     "regime": "several blocks",
+     "max_rel_err": 1.5183775974054987e-06,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 374,
+     "block": 32,
+     "warps": 374,
+     "threads": 11968,
+     "pairs": 374,
+     "regime": "several blocks",
+     "max_rel_err": 1.422046561688414e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 14",
+    "integer": true,
+    "nnz": 452297,
+    "genes": 187,
+    "cells": 2714,
+    "donors": 2,
+    "K": 6,
+    "density": 0.8909678274743631,
+    "scatter": {
+     "grid": 12,
+     "block": 128,
+     "warps": 48,
+     "threads": 1536,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 374,
+     "block": 32,
+     "warps": 374,
+     "threads": 11968,
+     "pairs": 374,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 15",
+    "integer": false,
+    "nnz": 1608739,
+    "genes": 1402,
+    "cells": 2211,
+    "donors": 3,
+    "K": 24,
+    "density": 0.5190037873607151,
+    "scatter": {
+     "grid": 72,
+     "block": 64,
+     "warps": 144,
+     "threads": 4608,
+     "regime": "several blocks",
+     "max_rel_err": 1.1050681524332191e-06,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 526,
+     "block": 256,
+     "warps": 4208,
+     "threads": 134656,
+     "pairs": 4206,
+     "regime": "several blocks",
+     "max_rel_err": 1.5725888395089612e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 15",
+    "integer": true,
+    "nnz": 1608739,
+    "genes": 1402,
+    "cells": 2211,
+    "donors": 3,
+    "K": 24,
+    "density": 0.5190037873607151,
+    "scatter": {
+     "grid": 72,
+     "block": 64,
+     "warps": 144,
+     "threads": 4608,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 526,
+     "block": 256,
+     "warps": 4208,
+     "threads": 134656,
+     "pairs": 4206,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 16",
+    "integer": false,
+    "nnz": 3569873,
+    "genes": 1548,
+    "cells": 2875,
+    "donors": 2,
+    "K": 17,
+    "density": 0.8017879751586755,
+    "scatter": {
+     "grid": 34,
+     "block": 1024,
+     "warps": 1088,
+     "threads": 34816,
+     "regime": "several blocks",
+     "max_rel_err": 1.8729778858668652e-06,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 387,
+     "block": 256,
+     "warps": 3096,
+     "threads": 99072,
+     "pairs": 3096,
+     "regime": "several blocks",
+     "max_rel_err": 1.556657339881577e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 16",
+    "integer": true,
+    "nnz": 3569873,
+    "genes": 1548,
+    "cells": 2875,
+    "donors": 2,
+    "K": 17,
+    "density": 0.8017879751586755,
+    "scatter": {
+     "grid": 34,
+     "block": 1024,
+     "warps": 1088,
+     "threads": 34816,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 387,
+     "block": 256,
+     "warps": 3096,
+     "threads": 99072,
+     "pairs": 3096,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 17",
+    "integer": false,
+    "nnz": 48403,
+    "genes": 211,
+    "cells": 811,
+    "donors": 1,
+    "K": 31,
+    "density": 0.2819843216503581,
+    "scatter": {
+     "grid": 31,
+     "block": 32,
+     "warps": 31,
+     "threads": 992,
+     "regime": "several blocks",
+     "max_rel_err": 7.713163772261051e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 14,
+     "block": 512,
+     "warps": 224,
+     "threads": 7168,
+     "pairs": 211,
+     "regime": "several blocks",
+     "max_rel_err": 1.621716057206798e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 17",
+    "integer": true,
+    "nnz": 48403,
+    "genes": 211,
+    "cells": 811,
+    "donors": 1,
+    "K": 31,
+    "density": 0.2819843216503581,
+    "scatter": {
+     "grid": 31,
+     "block": 32,
+     "warps": 31,
+     "threads": 992,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 14,
+     "block": 512,
+     "warps": 224,
+     "threads": 7168,
+     "pairs": 211,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 18",
+    "integer": false,
+    "nnz": 199822,
+    "genes": 1343,
+    "cells": 1462,
+    "donors": 1,
+    "K": 2,
+    "density": 0.10174192290655357,
+    "scatter": {
+     "grid": 2,
+     "block": 128,
+     "warps": 8,
+     "threads": 256,
+     "regime": "several blocks",
+     "max_rel_err": 5.774330483184323e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1343,
+     "block": 32,
+     "warps": 1343,
+     "threads": 42976,
+     "pairs": 1343,
+     "regime": "several blocks",
+     "max_rel_err": 1.3569338757164186e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 18",
+    "integer": true,
+    "nnz": 199822,
+    "genes": 1343,
+    "cells": 1462,
+    "donors": 1,
+    "K": 2,
+    "density": 0.10174192290655357,
+    "scatter": {
+     "grid": 2,
+     "block": 128,
+     "warps": 8,
+     "threads": 256,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1343,
+     "block": 32,
+     "warps": 1343,
+     "threads": 42976,
+     "pairs": 1343,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 19",
+    "integer": false,
+    "nnz": 1608148,
+    "genes": 1866,
+    "cells": 1670,
+    "donors": 4,
+    "K": 16,
+    "density": 0.5163410002016704,
+    "scatter": {
+     "grid": 64,
+     "block": 256,
+     "warps": 512,
+     "threads": 16384,
+     "regime": "several blocks",
+     "max_rel_err": 8.664887099242549e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1866,
+     "block": 128,
+     "warps": 7464,
+     "threads": 238848,
+     "pairs": 7464,
+     "regime": "several blocks",
+     "max_rel_err": 1.5917584733057618e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 19",
+    "integer": true,
+    "nnz": 1608148,
+    "genes": 1866,
+    "cells": 1670,
+    "donors": 4,
+    "K": 16,
+    "density": 0.5163410002016704,
+    "scatter": {
+     "grid": 64,
+     "block": 256,
+     "warps": 512,
+     "threads": 16384,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1866,
+     "block": 128,
+     "warps": 7464,
+     "threads": 238848,
+     "pairs": 7464,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 20",
+    "integer": false,
+    "nnz": 882259,
+    "genes": 1836,
+    "cells": 566,
+    "donors": 2,
+    "K": 6,
+    "density": 0.8490663651340701,
+    "scatter": {
+     "grid": 12,
+     "block": 64,
+     "warps": 24,
+     "threads": 768,
+     "regime": "several blocks",
+     "max_rel_err": 8.481704942245042e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 459,
+     "block": 256,
+     "warps": 3672,
+     "threads": 117504,
+     "pairs": 3672,
+     "regime": "several blocks",
+     "max_rel_err": 1.5232712110668624e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 20",
+    "integer": true,
+    "nnz": 882259,
+    "genes": 1836,
+    "cells": 566,
+    "donors": 2,
+    "K": 6,
+    "density": 0.8490663651340701,
+    "scatter": {
+     "grid": 12,
+     "block": 64,
+     "warps": 24,
+     "threads": 768,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 459,
+     "block": 256,
+     "warps": 3672,
+     "threads": 117504,
+     "pairs": 3672,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 21",
+    "integer": false,
+    "nnz": 27325,
+    "genes": 156,
+    "cells": 212,
+    "donors": 4,
+    "K": 22,
+    "density": 0.8271917036856998,
+    "scatter": {
+     "grid": 88,
+     "block": 256,
+     "warps": 704,
+     "threads": 22528,
+     "regime": "several blocks",
+     "max_rel_err": 3.561905859157286e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 39,
+     "block": 512,
+     "warps": 624,
+     "threads": 19968,
+     "pairs": 624,
+     "regime": "several blocks",
+     "max_rel_err": 1.4711429090550537e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 21",
+    "integer": true,
+    "nnz": 27325,
+    "genes": 156,
+    "cells": 212,
+    "donors": 4,
+    "K": 22,
+    "density": 0.8271917036856998,
+    "scatter": {
+     "grid": 88,
+     "block": 256,
+     "warps": 704,
+     "threads": 22528,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 39,
+     "block": 512,
+     "warps": 624,
+     "threads": 19968,
+     "pairs": 624,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 22",
+    "integer": false,
+    "nnz": 407060,
+    "genes": 1199,
+    "cells": 2443,
+    "donors": 5,
+    "K": 24,
+    "density": 0.13859007742659435,
+    "scatter": {
+     "grid": 120,
+     "block": 512,
+     "warps": 1920,
+     "threads": 61440,
+     "regime": "several blocks",
+     "max_rel_err": 5.460658555712161e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 750,
+     "block": 256,
+     "warps": 6000,
+     "threads": 192000,
+     "pairs": 5995,
+     "regime": "several blocks",
+     "max_rel_err": 1.6702887427714224e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 22",
+    "integer": true,
+    "nnz": 407060,
+    "genes": 1199,
+    "cells": 2443,
+    "donors": 5,
+    "K": 24,
+    "density": 0.13859007742659435,
+    "scatter": {
+     "grid": 120,
+     "block": 512,
+     "warps": 1920,
+     "threads": 61440,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 750,
+     "block": 256,
+     "warps": 6000,
+     "threads": 192000,
+     "pairs": 5995,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 23",
+    "integer": false,
+    "nnz": 161813,
+    "genes": 291,
+    "cells": 1006,
+    "donors": 3,
+    "K": 25,
+    "density": 0.553996655310099,
+    "scatter": {
+     "grid": 75,
+     "block": 32,
+     "warps": 75,
+     "threads": 2400,
+     "regime": "several blocks",
+     "max_rel_err": 7.167827996064624e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 219,
+     "block": 128,
+     "warps": 876,
+     "threads": 28032,
+     "pairs": 873,
+     "regime": "several blocks",
+     "max_rel_err": 1.4996676687386513e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 23",
+    "integer": true,
+    "nnz": 161813,
+    "genes": 291,
+    "cells": 1006,
+    "donors": 3,
+    "K": 25,
+    "density": 0.553996655310099,
+    "scatter": {
+     "grid": 75,
+     "block": 32,
+     "warps": 75,
+     "threads": 2400,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 219,
+     "block": 128,
+     "warps": 876,
+     "threads": 28032,
+     "pairs": 873,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 24",
+    "integer": false,
+    "nnz": 724893,
+    "genes": 1257,
+    "cells": 966,
+    "donors": 3,
+    "K": 31,
+    "density": 0.5971005292112624,
+    "scatter": {
+     "grid": 93,
+     "block": 256,
+     "warps": 744,
+     "threads": 23808,
+     "regime": "several blocks",
+     "max_rel_err": 8.564585603512292e-07,
+     "exact": false,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1886,
+     "block": 64,
+     "warps": 3772,
+     "threads": 120704,
+     "pairs": 3771,
+     "regime": "several blocks",
+     "max_rel_err": 1.5975693565640026e-07,
+     "exact": false,
+     "ok": true
+    }
+   },
+   {
+    "name": "random 24",
+    "integer": true,
+    "nnz": 724893,
+    "genes": 1257,
+    "cells": 966,
+    "donors": 3,
+    "K": 31,
+    "density": 0.5971005292112624,
+    "scatter": {
+     "grid": 93,
+     "block": 256,
+     "warps": 744,
+     "threads": 23808,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    },
+    "gather": {
+     "grid": 1886,
+     "block": 64,
+     "warps": 3772,
+     "threads": 120704,
+     "pairs": 3771,
+     "regime": "several blocks",
+     "max_rel_err": 0.0,
+     "exact": true,
+     "ok": true
+    }
+   }
+  ],
+  "n_cases": 72,
+  "regimes_passed": {
+   "scatter": [
+    "one block, several warps",
+    "one warp",
+    "several blocks"
+   ],
+   "gather": [
+    "one block, several warps",
+    "one warp",
+    "several blocks"
+   ]
+  },
+  "all_ok": true
+ },
+ "kernel": {
+  "small": {
+   "size": "small",
+   "genes": 2000,
+   "cells": 20000,
+   "donors": 30,
+   "K": 30,
+   "n_pb": 900,
+   "work": {
+    "nnz": 3200000,
+    "selections": 382937,
+    "terms": 61269920,
+    "mean_selections_per_cell": 19.14685,
+    "scatter_atomic_adds": 61269920,
+    "gather_masked_adds": 102400000,
+    "gather_nonzero_reads": 3200000,
+    "scatter_nonzero_reads": 61269920,
+    "output_entries": 1800000,
+    "segments": 60000,
+    "scatter_launch": {
+     "grid": 900,
+     "block": 256,
+     "warps": 7200,
+     "threads": 230400
+    },
+    "gather_launch": {
+     "grid": 15000,
+     "block": 128,
+     "warps": 60000,
+     "threads": 1920000,
+     "pairs": 60000
+    }
+   },
+   "trials": 3,
+   "repeats": 10,
+   "cpu_batched_ms": [
+    218.50327499987543,
+    222.61273399999482,
+    215.63088199991398
+   ],
+   "cpu_cpp_ms": [
+    72.1184040000935,
+    69.68487600011031,
+    66.94935199993779
+   ],
+   "cpu_cpp_max_rel_err": 1.1531699084033479e-07,
+   "layout_build_ms": 98.66015300008257,
+   "scatter_upload_ms": 7.226758999877347,
+   "gather_upload_ms": 5.572246999918207,
+   "scatter_max_rel_err": 4.2134013171012043e-07,
+   "scatter_ok": true,
+   "scatter_ms": [
+    [
+     6.746623992919922,
+     6.810336112976074,
+     6.880864143371582,
+     6.8587517738342285,
+     6.7788801193237305,
+     6.885183811187744,
+     6.899648189544678,
+     6.839776039123535,
+     6.833888053894043,
+     6.871039867401123
+    ],
+    [
+     4.808512210845947,
+     4.878655910491943,
+     4.6927361488342285,
+     4.78710412979126,
+     4.729407787322998,
+     4.730559825897217,
+     4.833375930786133,
+     4.798783779144287,
+     4.812704086303711,
+     4.809152126312256
+    ],
+    [
+     4.802559852600098,
+     4.772384166717529,
+     4.78329610824585,
+     4.789216041564941,
+     4.743231773376465,
+     4.7717437744140625,
+     4.766208171844482,
+     4.776576042175293,
+     4.776031970977783,
+     4.742623805999756
+    ]
+   ],
+   "gather_max_rel_err": 6.53856656765936e-07,
+   "gather_ok": true,
+   "gather_ms": [
+    [
+     1.373471975326538,
+     1.3685120344161987,
+     1.3691840171813965,
+     1.3680959939956665,
+     1.3660160303115845,
+     1.373088002204895,
+     1.3824000358581543,
+     1.3721599578857422,
+     1.3701119422912598,
+     1.3676799535751343
+    ],
+    [
+     1.0104320049285889,
+     1.005120038986206,
+     1.0063040256500244,
+     1.0024000406265259,
+     1.001471996307373,
+     0.9975680112838745,
+     0.9963840246200562,
+     0.9949439764022827,
+     1.0019199848175049,
+     0.9953280091285706
+    ],
+    [
+     0.9969599843025208,
+     0.9952319860458374,
+     0.9938880205154419,
+     1.0273280143737793,
+     0.9981759786605835,
+     0.9961599707603455,
+     0.9993919730186462,
+     0.9980800151824951,
+     0.9993919730186462,
+     0.9934719800949097
+    ]
+   ]
+  },
+  "medium": {
+   "size": "medium",
+   "genes": 4000,
+   "cells": 50000,
+   "donors": 30,
+   "K": 30,
+   "n_pb": 900,
+   "work": {
+    "nnz": 16000000,
+    "selections": 974731,
+    "terms": 311913920,
+    "mean_selections_per_cell": 19.49462,
+    "scatter_atomic_adds": 311913920,
+    "gather_masked_adds": 512000000,
+    "gather_nonzero_reads": 16000000,
+    "scatter_nonzero_reads": 311913920,
+    "output_entries": 3600000,
+    "segments": 120000,
+    "scatter_launch": {
+     "grid": 900,
+     "block": 256,
+     "warps": 7200,
+     "threads": 230400
+    },
+    "gather_launch": {
+     "grid": 30000,
+     "block": 128,
+     "warps": 120000,
+     "threads": 3840000,
+     "pairs": 120000
+    }
+   },
+   "trials": 3,
+   "repeats": 10,
+   "cpu_batched_ms": [
+    1407.8777429999718,
+    982.8819839999596,
+    934.3465189999733
+   ],
+   "cpu_cpp_ms": [
+    305.44177999991007,
+    295.82516100003886,
+    294.70737900010135
+   ],
+   "cpu_cpp_max_rel_err": 1.174171928470179e-07,
+   "cpu_loop_ms": [
+    14418.494162000115
+   ],
+   "layout_build_ms": 513.6876919998485,
+   "scatter_upload_ms": 86.26595700002326,
+   "gather_upload_ms": 33.137404000171955,
+   "scatter_max_rel_err": 4.933620648522947e-07,
+   "scatter_ok": true,
+   "scatter_ms": [
+    [
+     34.60905456542969,
+     29.656831741333008,
+     26.472415924072266,
+     25.609952926635742,
+     25.821088790893555,
+     25.88425636291504,
+     25.755647659301758,
+     25.859872817993164,
+     25.536191940307617,
+     25.184255599975586
+    ],
+    [
+     25.026559829711914,
+     25.214975357055664,
+     25.379392623901367,
+     25.450496673583984,
+     25.08563232421875,
+     25.31737518310547,
+     25.42585563659668,
+     25.2774715423584,
+     25.024959564208984,
+     25.276416778564453
+    ],
+    [
+     25.567615509033203,
+     24.97225570678711,
+     24.869312286376953,
+     25.11052894592285,
+     25.280384063720703,
+     25.166431427001953,
+     25.48486328125,
+     25.421056747436523,
+     24.909088134765625,
+     25.345983505249023
+    ]
+   ],
+   "gather_max_rel_err": 9.846436265344724e-07,
+   "gather_ok": true,
+   "gather_ms": [
+    [
+     1.7694720029830933,
+     1.7671680450439453,
+     1.7653759717941284,
+     1.7735040187835693,
+     1.7637120485305786,
+     1.7831039428710938,
+     1.7623039484024048,
+     1.763327956199646,
+     1.8127360343933105,
+     1.920896053314209
+    ],
+    [
+     1.68886399269104,
+     1.640447974205017,
+     1.6363519430160522,
+     1.6308159828186035,
+     1.634559988975525,
+     1.6369279623031616,
+     1.6353280544281006,
+     1.6340160369873047,
+     1.7367680072784424,
+     1.894368052482605
+    ],
+    [
+     1.6506880521774292,
+     1.6486400365829468,
+     1.6383999586105347,
+     1.6544640064239502,
+     1.6381440162658691,
+     1.6405760049819946,
+     1.640447974205017,
+     1.6343040466308594,
+     1.8766080141067505,
+     1.8791359663009644
+    ]
+   ]
+  },
+  "large": {
+   "size": "large",
+   "genes": 8000,
+   "cells": 120000,
+   "donors": 30,
+   "K": 30,
+   "n_pb": 900,
+   "work": {
+    "nnz": 76800000,
+    "selections": 2364859,
+    "terms": 1513509760,
+    "mean_selections_per_cell": 19.707158333333332,
+    "scatter_atomic_adds": 1513509760,
+    "gather_masked_adds": 2457600000,
+    "gather_nonzero_reads": 76800000,
+    "scatter_nonzero_reads": 1513509760,
+    "output_entries": 7200000,
+    "segments": 240000,
+    "scatter_launch": {
+     "grid": 900,
+     "block": 256,
+     "warps": 7200,
+     "threads": 230400
+    },
+    "gather_launch": {
+     "grid": 60000,
+     "block": 128,
+     "warps": 240000,
+     "threads": 7680000,
+     "pairs": 240000
+    }
+   },
+   "trials": 3,
+   "repeats": 10,
+   "cpu_batched_ms": [
+    4819.278880999946,
+    4451.502179000045,
+    5348.8455100000465
+   ],
+   "cpu_cpp_ms": [
+    1437.5463720000425,
+    1462.923223999951,
+    1468.014999999923
+   ],
+   "cpu_cpp_max_rel_err": 1.1769472981486779e-07,
+   "layout_build_ms": 2403.9414889998625,
+   "scatter_upload_ms": 584.5258299998477,
+   "gather_upload_ms": 147.6156329999867,
+   "scatter_max_rel_err": 4.90090882043326e-07,
+   "scatter_ok": true,
+   "scatter_ms": [
+    [
+     238.84803771972656,
+     239.0394287109375,
+     237.10263061523438,
+     239.87405395507812,
+     240.35308837890625,
+     238.16397094726562,
+     237.52099609375,
+     237.3171844482422,
+     238.7857208251953,
+     239.8701171875
+    ],
+    [
+     238.4916534423828,
+     240.41676330566406,
+     240.01536560058594,
+     238.12506103515625,
+     239.8461151123047,
+     239.067138671875,
+     239.75010681152344,
+     237.35296630859375,
+     239.16102600097656,
+     240.7479705810547
+    ],
+    [
+     238.83497619628906,
+     237.03961181640625,
+     238.60887145996094,
+     239.60047912597656,
+     238.1287384033203,
+     238.61209106445312,
+     239.22352600097656,
+     237.51475524902344,
+     238.07583618164062,
+     238.83775329589844
+    ]
+   ],
+   "gather_max_rel_err": 1.2430917018909256e-06,
+   "gather_ok": true,
+   "gather_ms": [
+    [
+     4.8269758224487305,
+     4.833280086517334,
+     4.806879997253418,
+     4.800511837005615,
+     5.607295989990234,
+     6.572447776794434,
+     6.570400238037109,
+     8.16540813446045,
+     8.91817569732666,
+     9.16220760345459
+    ],
+    [
+     4.724607944488525,
+     4.7557759284973145,
+     5.469632148742676,
+     5.453824043273926,
+     5.452928066253662,
+     5.807648181915283,
+     8.118271827697754,
+     8.166175842285156,
+     8.698080062866211,
+     8.697279930114746
+    ],
+    [
+     4.986591815948486,
+     5.042175769805908,
+     5.050367832183838,
+     5.021696090698242,
+     5.980000019073486,
+     7.5278401374816895,
+     7.530496120452881,
+     9.09670352935791,
+     9.103360176086426,
+     9.299967765808105
+    ]
+   ]
+  }
+ },
+ "end_to_end": {
+  "repeats": 5,
+  "stages": [
+   "host_prep_ms",
+   "h2d_ms",
+   "kernel_ms",
+   "d2h_ms"
+  ],
+  "note": "host_prep is the dtype conversion for scatter and the layout build for gather. kernel is launch + kernel + row normalisation, synchronised. Pageable host memory.",
+  "scatter": {
+   "host_prep_ms": [
+    0.016747000017858227,
+    0.016232999996645958,
+    0.025965000077121658,
+    0.016621999975541257,
+    0.019849999944199226
+   ],
+   "h2d_ms": [
+    30.737871999917843,
+    31.05572099980236,
+    31.130910000001677,
+    31.625779000023613,
+    32.418984000059936
+   ],
+   "kernel_ms": [
+    25.059161000172026,
+    25.27913400012949,
+    25.20075600000382,
+    25.45096999983798,
+    25.145529999917926
+   ],
+   "d2h_ms": [
+    3.8616009999259404,
+    3.711339999881602,
+    3.816910999830725,
+    4.345867999973052,
+    3.681246000041938
+   ],
+   "total_ms": [
+    59.67538100003367,
+    60.0624279998101,
+    60.174541999913345,
+    61.439238999810186,
+    61.265609999964
+   ],
+   "total_without_host_prep_ms": [
+    59.65863400001581,
+    60.04619499981345,
+    60.14857699983622,
+    61.422616999834645,
+    61.2457600000198
+   ],
+   "bytes_h2d": 132102532,
+   "bytes_d2h": 14400000
+  },
+  "gather": {
+   "host_prep_ms": [
+    508.88416700013295,
+    525.0471459999062,
+    509.34813300000314,
+    510.71707300002345,
+    517.2043000000031
+   ],
+   "h2d_ms": [
+    30.916618999981438,
+    30.130202000009376,
+    31.219243999885293,
+    30.239615000027698,
+    32.802573000026314
+   ],
+   "kernel_ms": [
+    1.6003759999421163,
+    1.571119000118415,
+    3.1388800000513584,
+    3.137031000051138,
+    3.149825000036799
+   ],
+   "d2h_ms": [
+    3.7046350000764505,
+    3.6633469999287627,
+    3.9972629999738274,
+    3.8674939999054914,
+    4.253064999829803
+   ],
+   "total_ms": [
+    545.105797000133,
+    560.4118139999628,
+    547.7035199999136,
+    547.9612130000078,
+    557.409762999896
+   ],
+   "total_without_host_prep_ms": [
+    36.221630000000005,
+    35.364668000056554,
+    38.35538699991048,
+    37.24413999998433,
+    40.205462999892916
+   ],
+   "bytes_h2d": 128680004,
+   "bytes_d2h": 14400000
+  },
+  "size": "medium",
+  "cpu_batched_ms": [
+   1407.8777429999718,
+   982.8819839999596,
+   934.3465189999733
+  ],
+  "cpu_cpp_ms": [
+   305.44177999991007,
+   295.82516100003886,
+   294.70737900010135
+  ]
+ },
+ "profile": {
+  "size": "large",
+  "smi": {
+   "scatter": {
+    "available": true,
+    "seconds": 6.0,
+    "interval_ms": 100,
+    "calls": 26,
+    "calls_per_s": 4.333333333333333,
+    "samples_total": 67,
+    "samples": 50,
+    "utilization.gpu": {
+     "median": 100.0,
+     "mean": 100.0,
+     "min": 100.0,
+     "max": 100.0
+    },
+    "utilization.memory": {
+     "median": 95.0,
+     "mean": 94.9,
+     "min": 93.0,
+     "max": 96.0
+    },
+    "memory.used": {
+     "median": 1451.0,
+     "mean": 1451.0,
+     "min": 1451.0,
+     "max": 1451.0
+    },
+    "power.draw": {
+     "median": 70.005,
+     "mean": 69.7818,
+     "min": 67.54,
+     "max": 71.84
+    }
+   },
+   "gather": {
+    "available": true,
+    "seconds": 6.0,
+    "interval_ms": 100,
+    "calls": 850,
+    "calls_per_s": 141.66666666666666,
+    "samples_total": 68,
+    "samples": 51,
+    "utilization.gpu": {
+     "median": 99.0,
+     "mean": 99.0,
+     "min": 99.0,
+     "max": 99.0
+    },
+    "utilization.memory": {
+     "median": 66.0,
+     "mean": 66.17647058823529,
+     "min": 61.0,
+     "max": 67.0
+    },
+    "memory.used": {
+     "median": 1451.0,
+     "mean": 1451.0,
+     "min": 1451.0,
+     "max": 1451.0
+    },
+    "power.draw": {
+     "median": 69.64,
+     "mean": 69.47235294117647,
+     "min": 62.83,
+     "max": 70.62
+    }
+   }
+  },
+  "resource_usage": {
+   "available": true,
+   "compiler": "/usr/local/cuda/bin/nvcc",
+   "arch": "sm_75",
+   "kernels": {
+    "pb_gather": {
+     "registers": 65,
+     "stack_bytes": 0,
+     "spill_store_bytes": 0,
+     "spill_load_bytes": 0
+    },
+    "pb_scatter": {
+     "registers": 36,
+     "stack_bytes": 0,
+     "spill_store_bytes": 0,
+     "spill_load_bytes": 0
+    }
+   },
+   "note": "compiled by nvcc. CuPy compiles the same source with NVRTC, so counts may differ slightly.",
+   "raw": "ptxas info    : 0 bytes gmem\nptxas info    : Compiling entry function 'pb_gather' for 'sm_75'\nptxas info    : Function properties for pb_gather\n    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads\nptxas info    : Used 65 registers, used 0 barriers, 404 bytes cmem[0], 248 bytes cmem[2]\nptxas info    : Compile time = 66.531 ms\nptxas info    : Compiling entry function 'pb_scatter' for 'sm_75'\nptxas info    : Function properties for pb_scatter\n    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads\nptxas info    : Used 36 registers, used 0 barriers, 404 bytes cmem[0]\nptxas info    : Compile time = 6.404 ms\n"
+  },
+  "ncu": {
+   "available": true,
+   "tool": "/usr/local/cuda/bin/ncu",
+   "kernels": {
+    "pb_scatter": {
+     "DRAM Frequency": {
+      "value": "4,867,612,231.43",
+      "unit": "hz"
+     },
+     "SM Frequency": {
+      "value": "584,999,268.08",
+      "unit": "hz"
+     },
+     "Elapsed Cycles": {
+      "value": "20,077,487",
+      "unit": "cycle"
+     },
+     "Memory Throughput": {
+      "value": "47.19",
+      "unit": "%"
+     },
+     "DRAM Throughput": {
+      "value": "45.40",
+      "unit": "%"
+     },
+     "Duration": {
+      "value": "34,320,512",
+      "unit": "ns"
+     },
+     "L1/TEX Cache Throughput": {
+      "value": "94.39",
+      "unit": "%"
+     },
+     "L2 Cache Throughput": {
+      "value": "40.11",
+      "unit": "%"
+     },
+     "SM Active Cycles": {
+      "value": "18,823,171.57",
+      "unit": "cycle"
+     },
+     "Compute (SM) Throughput": {
+      "value": "8.06",
+      "unit": "%"
+     },
+     "Block Size": {
+      "value": "256",
+      "unit": ""
+     },
+     "Function Cache Configuration": {
+      "value": "CachePreferNone",
+      "unit": ""
+     },
+     "Grid Size": {
+      "value": "900",
+      "unit": ""
+     },
+     "Registers Per Thread": {
+      "value": "36",
+      "unit": "register/thread"
+     },
+     "Shared Memory Configuration Size": {
+      "value": "32,768",
+      "unit": "byte"
+     },
+     "Driver Shared Memory Per Block": {
+      "value": "0",
+      "unit": "byte/block"
+     },
+     "Dynamic Shared Memory Per Block": {
+      "value": "0",
+      "unit": "byte/block"
+     },
+     "Static Shared Memory Per Block": {
+      "value": "0",
+      "unit": "byte/block"
+     },
+     "# SMs": {
+      "value": "40",
+      "unit": "SM"
+     },
+     "Stack Size": {
+      "value": "1,024",
+      "unit": ""
+     },
+     "Threads": {
+      "value": "230,400",
+      "unit": "thread"
+     },
+     "# TPCs": {
+      "value": "20",
+      "unit": ""
+     },
+     "Enabled TPC IDs": {
+      "value": "all",
+      "unit": ""
+     },
+     "Uses Green Context": {
+      "value": "0",
+      "unit": ""
+     },
+     "Waves Per SM": {
+      "value": "5.62",
+      "unit": ""
+     },
+     "Block Limit SM": {
+      "value": "16",
+      "unit": "block"
+     },
+     "Block Limit Registers": {
+      "value": "6",
+      "unit": "block"
+     },
+     "Block Limit Shared Mem": {
+      "value": "16",
+      "unit": "block"
+     },
+     "Block Limit Warps": {
+      "value": "4",
+      "unit": "block"
+     },
+     "Theoretical Active Warps per SM": {
+      "value": "32",
+      "unit": "warp"
+     },
+     "Theoretical Occupancy": {
+      "value": "100",
+      "unit": "%"
+     },
+     "Achieved Occupancy": {
+      "value": "95.11",
+      "unit": "%"
+     },
+     "Achieved Active Warps Per SM": {
+      "value": "30.44",
+      "unit": "warp"
+     },
+     "Average DRAM Active Cycles": {
+      "value": "75,842,274.50",
+      "unit": "cycle"
+     },
+     "Total DRAM Elapsed Cycles": {
+      "value": "1,336,471,552",
+      "unit": "cycle"
+     },
+     "Average L1 Active Cycles": {
+      "value": "18,823,171.57",
+      "unit": "cycle"
+     },
+     "Total L1 Elapsed Cycles": {
+      "value": "798,267,016",
+      "unit": "cycle"
+     },
+     "Average L2 Active Cycles": {
+      "value": "28,531,113.28",
+      "unit": "cycle"
+     },
+     "Total L2 Elapsed Cycles": {
+      "value": "939,000,128",
+      "unit": "cycle"
+     },
+     "Average SM Active Cycles": {
+      "value": "18,823,171.57",
+      "unit": "cycle"
+     },
+     "Total SM Elapsed Cycles": {
+      "value": "798,267,016",
+      "unit": "cycle"
+     },
+     "Average SMSP Active Cycles": {
+      "value": "18,788,403.91",
+      "unit": "cycle"
+     },
+     "Total SMSP Elapsed Cycles": {
+      "value": "3,193,068,064",
+      "unit": "cycle"
+     }
+    },
+    "pb_gather": {
+     "DRAM Frequency": {
+      "value": "4,985,026,026.74",
+      "unit": "hz"
+     },
+     "SM Frequency": {
+      "value": "585,004,887.18",
+      "unit": "hz"
+     },
+     "Elapsed Cycles": {
+      "value": "1,632,740",
+      "unit": "cycle"
+     },
+     "Memory Throughput": {
+      "value": "76.27",
+      "unit": "%"
+     },
+     "DRAM Throughput": {
+      "value": "29.19",
+      "unit": "%"
+     },
+     "Duration": {
+      "value": "2,790,976",
+      "unit": "ns"
+     },
+     "L1/TEX Cache Throughput": {
+      "value": "86.24",
+      "unit": "%"
+     },
+     "L2 Cache Throughput": {
+      "value": "25.60",
+      "unit": "%"
+     },
+     "SM Active Cycles": {
+      "value": "1,626,774.40",
+      "unit": "cycle"
+     },
+     "Compute (SM) Throughput": {
+      "value": "76.27",
+      "unit": "%"
+     },
+     "Block Size": {
+      "value": "128",
+      "unit": ""
+     },
+     "Function Cache Configuration": {
+      "value": "CachePreferNone",
+      "unit": ""
+     },
+     "Grid Size": {
+      "value": "30,000",
+      "unit": ""
+     },
+     "Registers Per Thread": {
+      "value": "65",
+      "unit": "register/thread"
+     },
+     "Shared Memory Configuration Size": {
+      "value": "32,768",
+      "unit": "byte"
+     },
+     "Driver Shared Memory Per Block": {
+      "value": "0",
+      "unit": "byte/block"
+     },
+     "Dynamic Shared Memory Per Block": {
+      "value": "0",
+      "unit": "byte/block"
+     },
+     "Static Shared Memory Per Block": {
+      "value": "0",
+      "unit": "byte/block"
+     },
+     "# SMs": {
+      "value": "40",
+      "unit": "SM"
+     },
+     "Stack Size": {
+      "value": "1,024",
+      "unit": ""
+     },
+     "Threads": {
+      "value": "3,840,000",
+      "unit": "thread"
+     },
+     "# TPCs": {
+      "value": "20",
+      "unit": ""
+     },
+     "Enabled TPC IDs": {
+      "value": "all",
+      "unit": ""
+     },
+     "Uses Green Context": {
+      "value": "0",
+      "unit": ""
+     },
+     "Waves Per SM": {
+      "value": "107.14",
+      "unit": ""
+     },
+     "Block Limit SM": {
+      "value": "16",
+      "unit": "block"
+     },
+     "Block Limit Registers": {
+      "value": "7",
+      "unit": "block"
+     },
+     "Block Limit Shared Mem": {
+      "value": "16",
+      "unit": "block"
+     },
+     "Block Limit Warps": {
+      "value": "8",
+      "unit": "block"
+     },
+     "Theoretical Active Warps per SM": {
+      "value": "28",
+      "unit": "warp"
+     },
+     "Theoretical Occupancy": {
+      "value": "87.50",
+      "unit": "%"
+     },
+     "Achieved Occupancy": {
+      "value": "84.13",
+      "unit": "%"
+     },
+     "Achieved Active Warps Per SM": {
+      "value": "26.92",
+      "unit": "warp"
+     },
+     "Average DRAM Active Cycles": {
+      "value": "4,061,694",
+      "unit": "cycle"
+     },
+     "Total DRAM Elapsed Cycles": {
+      "value": "111,304,704",
+      "unit": "cycle"
+     },
+     "Average L1 Active Cycles": {
+      "value": "1,626,774.40",
+      "unit": "cycle"
+     },
+     "Total L1 Elapsed Cycles": {
+      "value": "65,138,960",
+      "unit": "cycle"
+     },
+     "Average L2 Active Cycles": {
+      "value": "2,367,136.25",
+      "unit": "cycle"
+     },
+     "Total L2 Elapsed Cycles": {
+      "value": "76,330,624",
+      "unit": "cycle"
+     },
+     "Average SM Active Cycles": {
+      "value": "1,626,774.40",
+      "unit": "cycle"
+     },
+     "Total SM Elapsed Cycles": {
+      "value": "65,138,960",
+      "unit": "cycle"
+     },
+     "Average SMSP Active Cycles": {
+      "value": "1,626,707.14",
+      "unit": "cycle"
+     },
+     "Total SMSP Elapsed Cycles": {
+      "value": "260,555,840",
+      "unit": "cycle"
+     }
+    }
+   },
+   "log": [
+    "ncu --kernel-name regex:pb_ --launch-count 4: exit 0"
+   ],
+   "raw": "==PROF== Connected to process 8247 (/usr/bin/python3.13)\nprofile target done\n==PROF== Disconnected from process 8247\n\"ID\",\"Process ID\",\"Process Name\",\"Host Name\",\"Kernel Name\",\"Context\",\"Stream\",\"Block Size\",\"Grid Size\",\"Device\",\"CC\",\"Section Name\",\"Metric Name\",\"Metric Unit\",\"Metric Value\",\"Rule Name\",\"Rule Type\",\"Rule Description\",\"Estimated Speedup Type\",\"Estimated Speedup\"\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"DRAM Frequency\",\"hz\",\"4,867,612,231.43\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"SM Frequency\",\"hz\",\"584,999,268.08\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"Elapsed Cycles\",\"cycle\",\"20,077,487\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"Memory Throughput\",\"%\",\"47.19\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"DRAM Throughput\",\"%\",\"45.40\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"Duration\",\"ns\",\"34,320,512\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"L1/TEX Cache Throughput\",\"%\",\"94.39\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"L2 Cache Throughput\",\"%\",\"40.11\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"SM Active Cycles\",\"cycle\",\"18,823,171.57\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU Speed Of Light Throughput\",\"Compute (SM) Throughput\",\"%\",\"8.06\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"SpeedOfLight\",\"\",\"\",\"\",\"SOLBottleneck\",\"OPT\",\"This workload exhibits low compute throughput and memory bandwidth utilization relative to the peak performance of this device. Achieved compute throughput and/or memory bandwidth below 60.0% of peak typically indicate latency issues. Look at Scheduler Statistics and Warp State Statistics for potential reasons.\",\"\",\"\"\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Block Size\",\"\",\"256\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Function Cache Configuration\",\"\",\"CachePreferNone\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Grid Size\",\"\",\"900\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Registers Per Thread\",\"register/thread\",\"36\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Shared Memory Configuration Size\",\"byte\",\"32,768\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Driver Shared Memory Per Block\",\"byte/block\",\"0\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Dynamic Shared Memory Per Block\",\"byte/block\",\"0\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Static Shared Memory Per Block\",\"byte/block\",\"0\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"# SMs\",\"SM\",\"40\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Stack Size\",\"\",\"1,024\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Threads\",\"thread\",\"230,400\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"# TPCs\",\"\",\"20\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Enabled TPC IDs\",\"\",\"all\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Uses Green Context\",\"\",\"0\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Launch Statistics\",\"Waves Per SM\",\"\",\"5.62\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Occupancy\",\"Block Limit SM\",\"block\",\"16\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Occupancy\",\"Block Limit Registers\",\"block\",\"6\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Occupancy\",\"Block Limit Shared Mem\",\"block\",\"16\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Occupancy\",\"Block Limit Warps\",\"block\",\"4\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Occupancy\",\"Theoretical Active Warps per SM\",\"warp\",\"32\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Occupancy\",\"Theoretical Occupancy\",\"%\",\"100\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Occupancy\",\"Achieved Occupancy\",\"%\",\"95.11\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"Occupancy\",\"Achieved Active Warps Per SM\",\"warp\",\"30.44\",\n\"0\",\"8247\",\"python3.13\",\"127.0.0.1\",\"pb_scatter\",\"1\",\"7\",\"(256, 1, 1)\",\"(900, 1, 1)\",\"0\",\"7.5\",\"GPU and Memor"
+  },
+  "nvprof": {
+   "available": false,
+   "reason": "nvprof not found"
+  }
+ },
+ "tests": {
+  "pytest_exit": 0,
+  "summary": "28 passed, 9 skipped in 39.35s"
+ }
+}

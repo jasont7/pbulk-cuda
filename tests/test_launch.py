@@ -17,7 +17,7 @@ def test_regimes():
     assert regime(scatter_launch(1, 256)) == "one block, several warps"
     assert regime(scatter_launch(2, 32)) == "several blocks"
     assert regime(gather_launch(1, 1, 32)) == "one warp"
-    assert regime(gather_launch(8, 4, 1024)) == "one block, several warps"
+    assert regime(gather_launch(8, 2, 512)) == "one block, several warps"
     assert regime(gather_launch(8, 4, 128)) == "several blocks"
 
 
