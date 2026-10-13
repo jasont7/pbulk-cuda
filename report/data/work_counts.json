@@ -1,0 +1,92 @@
+{
+ "small": {
+  "genes": 2000,
+  "cells": 20000,
+  "donors": 30,
+  "K": 30,
+  "n_pb": 900,
+  "nnz": 3200000,
+  "selections": 382937,
+  "terms": 61269920,
+  "mean_selections_per_cell": 19.14685,
+  "scatter_atomic_adds": 61269920,
+  "gather_masked_adds": 102400000,
+  "gather_nonzero_reads": 3200000,
+  "scatter_nonzero_reads": 61269920,
+  "output_entries": 1800000,
+  "segments": 60000,
+  "scatter_launch": {
+   "grid": 900,
+   "block": 256,
+   "warps": 7200,
+   "threads": 230400
+  },
+  "gather_launch": {
+   "grid": 15000,
+   "block": 128,
+   "warps": 60000,
+   "threads": 1920000,
+   "pairs": 60000
+  }
+ },
+ "medium": {
+  "genes": 4000,
+  "cells": 50000,
+  "donors": 30,
+  "K": 30,
+  "n_pb": 900,
+  "nnz": 16000000,
+  "selections": 974731,
+  "terms": 311913920,
+  "mean_selections_per_cell": 19.49462,
+  "scatter_atomic_adds": 311913920,
+  "gather_masked_adds": 512000000,
+  "gather_nonzero_reads": 16000000,
+  "scatter_nonzero_reads": 311913920,
+  "output_entries": 3600000,
+  "segments": 120000,
+  "scatter_launch": {
+   "grid": 900,
+   "block": 256,
+   "warps": 7200,
+   "threads": 230400
+  },
+  "gather_launch": {
+   "grid": 30000,
+   "block": 128,
+   "warps": 120000,
+   "threads": 3840000,
+   "pairs": 120000
+  }
+ },
+ "large": {
+  "genes": 8000,
+  "cells": 120000,
+  "donors": 30,
+  "K": 30,
+  "n_pb": 900,
+  "nnz": 76800000,
+  "selections": 2364859,
+  "terms": 1513509760,
+  "mean_selections_per_cell": 19.707158333333332,
+  "scatter_atomic_adds": 1513509760,
+  "gather_masked_adds": 2457600000,
+  "gather_nonzero_reads": 76800000,
+  "scatter_nonzero_reads": 1513509760,
+  "output_entries": 7200000,
+  "segments": 240000,
+  "scatter_launch": {
+   "grid": 900,
+   "block": 256,
+   "warps": 7200,
+   "threads": 230400
+  },
+  "gather_launch": {
+   "grid": 60000,
+   "block": 128,
+   "warps": 240000,
+   "threads": 7680000,
+   "pairs": 240000
+  }
+ }
+}

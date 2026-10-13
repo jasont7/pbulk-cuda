@@ -1,0 +1,17 @@
+{
+ "_note": "Transcribed by hand from RESULTS.md (Oct 6, Colab Tesla T4, CuPy 14.0.1, synthetic data). Strings are kept exactly as written there. tests/test_report.py checks every value against RESULTS.md.",
+ "date": "Oct 6",
+ "gpu": "Tesla T4",
+ "cupy": "14.0.1",
+ "gpu_repeats": 10,
+ "sizes": {
+  "medium": {"genes": "4,000", "cells": "50,000", "nnz": "16.0 M", "cpu_loop_ms": "13,935", "cpu_batched_ms": "989",
+             "scatter_ms": "25.5", "gather_ms": "1.52", "scatter_err": "4.9e-7", "gather_err": "9.9e-7",
+             "gather_vs_scatter": "16.8", "gather_vs_batched": "652", "gather_vs_loop": "9,186",
+             "upload_layout_s": "0.69"},
+  "large": {"genes": "8,000", "cells": "120,000", "nnz": "76.8 M", "cpu_loop_ms": null, "cpu_batched_ms": "4,389",
+            "scatter_ms": "246.5", "gather_ms": "4.90", "scatter_err": "4.8e-7", "gather_err": "1.2e-6",
+            "gather_vs_scatter": "50.3", "gather_vs_batched": "896", "gather_vs_loop": null,
+            "upload_layout_s": "3.2"}
+ }
+}
