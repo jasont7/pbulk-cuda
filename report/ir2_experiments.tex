@@ -47,8 +47,8 @@ and the arrays can be cast and pinned once instead of on each call.
 \paragraph{The first attempt failed, and why.}\label{sec:fail} In the first run the transposed reduction was written
 as a loop over the offset $o$ with an inner loop of length $o$. Both kernels that used it were
 4 to 5$\times$ \emph{slower} than the baseline (7.9 and 8.8 ms against 1.7 ms on medium). The ptxas
-report showed a 128-byte stack frame for both, exactly 32 floats: nvcc had not unrolled the nested
-loop, so \code{acc[]} was indexed at run time and moved to local memory. Nsight confirmed it. DRAM
+report showed a 128-byte stack frame for both, exactly 32 floats: nvcc had not unrolled the nested loop, so \code{acc[]} was indexed at run time and moved to local memory,
+as the CUDA guide warns for arrays it cannot prove are indexed with constants~\cite{cudaguide}. Nsight confirmed it. DRAM
 throughput rose from 29\% to 66\%, warp cycles per issued instruction from 10.9 to 49, while the
 instruction count fell from 161 M to 95 M. The reduction was doing what it should, and the spill was
 eating the gain. Writing each halving step as a template on a compile-time offset (\code{halve<O>})
@@ -67,7 +67,7 @@ count where it is but cuts the bytes the L1 handles from 656 MB to 269 MB, 2.4$\
 matches the claim that the dependent lookup was most of the L1 traffic. DRAM bytes read stay at about
 235 MB in all three kernels, which shows that the mask lookups had been served from cache all along.
 With both changes the kernel is no longer held back by instructions alone: DRAM throughput is at 70\%, against 30\%
-for the baseline, and warp cycles per instruction fall from 10.9 to 8.6. It now runs close to both roofs at once (SM 73\%, DRAM 70\%),
+for the baseline, and warp cycles per instruction fall from 10.9 to 8.6. In roofline terms~\cite{williams2009} it now runs close to both roofs at once (SM 73\%, DRAM 70\%),
 so further gains on this layout need fewer bytes and fewer instructions per nonzero together.
 
 \paragraph{Large.} Run 2's three trials on large were too noisy to read (baseline trial medians from 4.9
@@ -85,6 +85,14 @@ clock speed it is 12\% slower (6.70 against 5.96 ms, in all eight trials). Nsigh
 profile cannot show what goes wrong at full speed. A profile without clock locking is the first item for
 the next milestone. Second, every kernel reads about 1.7 to 1.9 times more bytes from DRAM than its input
 streams hold (1.04 GB against 614 MB for the fused kernel on large), on both sizes.
+
+\paragraph{What this adds to the CSR-vector picture.} The literature treats the cost of the CSR-vector
+reduction as a short-row problem~\cite{bell2009,greathouse2014}. These results show a second side to it.
+With $K$ outputs per row the reduction cost scales with $K$, so it dominated even at 133 nonzeros per
+segment, and a reduce-scatter brings it from $5K$ shuffles to $K-1$. The gain from the reduce-scatter alone fell as segments grew (1.68$\times$ on small with 53 nonzeros per
+segment, 1.32$\times$ on medium with 133), as a fixed cost per segment should. Longer segments also tilt
+the comparison with Yang et al.'s broadcast mapping~\cite{yang2018} toward ours, since its shuffles grow
+with the nonzeros and ours do not.
 
 \paragraph{Block size.} Figure~\ref{fig:blocks} sweeps the block size on medium. Every gather variant is
 fastest at 64 threads, two warps per block. The fused kernel is the least sensitive (1.19 to 1.53 ms
@@ -113,8 +121,9 @@ arithmetic for latency.
 
 \paragraph{New ideas from this result.} The analysis points to two fixes, one per loss. (a)
 \emph{Sort cells by popcount.} The order of cells inside a donor is free, so the layout build can sort
-each donor's cells by the popcount of their flipped mask. Neighbouring lanes then carry similar
-popcounts, the warp maximum moves toward the mean, and the lane-step cut rises from 2.2$\times$
+each donor's cells by the popcount of their flipped mask. Neighbouring lanes then carry similar popcounts, the warp maximum moves toward the mean (the
+remedy ACSR applies to rows, binning them by length so a warp's threads get similar
+work~\cite{ashari2014}), and the lane-step cut rises from 2.2$\times$
 toward the full 3.3$\times$. (b) \emph{A smaller shared footprint.} Storing 30 rows instead of 32 and
 launching one-warp blocks lifts the cap from 12 to 16 resident warps per SM. Occupancy is the largest
 loss, but (b) only reaches 50\%, so I expect \code{gather\_cs} to stay behind the register-resident

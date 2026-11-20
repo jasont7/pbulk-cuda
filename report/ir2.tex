@@ -208,8 +208,10 @@ one of the three that changes the asymptotic work, and because the gap between t
 time cut is itself a measurement of SIMT costs.
 
 \paragraph{Literature.} Exploiting the structure of a 0/1 matrix to share additions is old: the Four
-Russians method precomputes sums over groups of rows of a binary matrix~\cite{arlazarov1970}, and
-masked sparse products skip work outside a mask~\cite{milakovic2022}. Using a complement so that a
+Russians method precomputes sums over groups of rows of a binary matrix~\cite{arlazarov1970}, and masked sparse products skip work outside a mask~\cite{milakovic2022}. GraphBLAS goes one step
+closer: its operations accept the \emph{complement} of a mask~\cite{buluc2017}. That complement chooses
+which outputs to compute, though. Here the complement chooses which inputs to add, and the output is
+recovered as a difference from a total. Using a complement so that a
 dense selection costs as little as a sparse one I have not found in the pseudo-bulk or SpMV literature.
 It relies on knowing the segment total, which the donor layout provides for one add.
 
@@ -236,7 +238,16 @@ adds, and the transposed form adds two selects per step, so I expect 1.3 to 1.6$
 (a) removes most of the L1 traffic. If L1 is the binding limit, the kernel moves to being purely
 instruction-bound and I expect a further 1.1 to 1.3$\times$. Together, 1.4 to 2$\times$ on the kernel.
 
-\paragraph{Literature.} Warp-level reductions with shuffles are standard~\cite{cudaguide}. The
+\paragraph{Literature.} The reduction share is a known weakness of the CSR-vector mapping. Each row pays a fixed
+cross-lane reduction, so the kernel suits long rows~\cite{bell2009}, and CSR-Adaptive was built to
+handle short rows differently~\cite{greathouse2014}. Here the fixed cost is multiplied by the $K$
+outputs of each segment. Viewed per segment, gather is an SpMM with a 0/1 dense operand of $K$ columns.
+Yang et al.'s row-split SpMM maps lanes to the dense columns instead, and shares each group of 32
+nonzeros through a round of 32 shuffle broadcasts so that the dense rows are read
+coalesced~\cite{yang2018}. That costs about one shuffle per nonzero and needs no reduction. Our mapping needs no broadcasts and reads the dense operand as one 32-bit mask per nonzero instead of
+$K$ values, and with the transposed reduction it pays 31 shuffles per segment whatever its length. So it uses fewer shuffles
+whenever a segment has more than about 31 nonzeros, and the average is 133 on medium and 320 on large.
+Warp-level reductions with shuffles are standard~\cite{cudaguide}. The
 transposed form is the recursive-halving reduce-scatter used for MPI collectives~\cite{thakur2005},
 applied to the 32 registers of a warp. Precomputing an indirection into the stream is a common
 trade of memory for latency. I have not found it applied to pseudo-bulk generation, which so far runs
