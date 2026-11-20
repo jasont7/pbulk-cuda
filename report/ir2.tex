@@ -34,9 +34,11 @@ product $PB = S X^{\top}$, in a few milliseconds on a T4. This report profiles t
 two limits. End to end, 93\% of the time is a host-side data layout step, not the kernel. Inside the
 kernel, the SM and the L1 cache are the busy units, not DRAM, because every nonzero costs a dependent
 mask lookup, 32 masked adds and a large share of warp shuffles. I propose three ideas backed by that
-analysis, estimate the gain of each, and implement them: the layout built on the GPU, a
-complement-based kernel that does less arithmetic work, and a kernel that streams a precomputed mask
-and reduces with 31 shuffles instead of 160. Code: \url{https://github.com/jasont7/pbulk-cuda}.
+analysis, estimate the gain of each, and implement and measure all three. Building the layout on
+the GPU is 12 to 15 times faster and cuts the medium pipeline from 670 ms to 130 ms. A fused mask stream
+with a transposed warp reduction makes the kernel 1.4 to 1.8 times faster on small and medium inputs,
+after a first version that spilled to local memory. A complement-based kernel cuts the adds 3.3 times
+but runs 2 times slower, and the profile shows why: shared-memory accumulators cost occupancy. Code: \url{https://github.com/jasont7/pbulk-cuda}.
 \end{abstract}
 
 \maketitle
@@ -314,9 +316,11 @@ per donor and nonzeros per cell will make segment lengths uneven.
 \section{Conclusion}
 
 Profiling the IR1 code showed that its pipeline was host-bound and its kernel was bound by on-chip work,
-not DRAM. The three ideas target those limits in turn: the layout on the GPU, less arithmetic through
-complements, and fewer L1 transactions and shuffles through a fused mask stream and a transposed
-reduction. Section~\ref{sec:exp} reports how far each one got.
+not DRAM. Moving the layout to the GPU fixed the first (5.2 times end to end on medium), and the fused
+kernel moved the second most of the way to the memory roof (1.4 times, DRAM throughput from 30\% to
+70\%). The complement idea showed that a cut in PRAM work does not survive SIMT costs when it pushes
+accumulators out of registers, which sets the next step: keep the work cut in registers, profile the
+large input, and remove the host-side preparation that now dominates the pipeline.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{refs}
