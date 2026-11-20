@@ -10,6 +10,7 @@ import numpy as np
 
 HERE = pathlib.Path(__file__).resolve().parent
 RES = HERE / "data" / "ir2_results.json"
+RES3 = HERE / "data" / "ir2_large_results.json"
 OUT = HERE / "generated" / "ir2_tables.tex"
 FIG = HERE / "figures"
 KNAMES = {"scatter": "scatter (IR1 v1)", "gather": "gather (IR1 v2)", "gather_xr": "gather\\_xr (3b)",
@@ -40,12 +41,17 @@ def main():
     if r["meta"]["backend"] != "cuda" and "--allow-fake" not in sys.argv:
         raise SystemExit("results not from a real GPU")
     K = r["kernel"]
+    R3 = json.loads(RES3.read_text()) if RES3.exists() else None
+    if R3:                                   # run 3: large again, 8 trials, Nsight on large
+        K = dict(K)
+        K["large"] = {**R3["kernel"]["large"], "work_cs": K["large"]["work_cs"]}
+        K["large"].setdefault("cusparse_error", r["kernel"]["large"].get("cusparse_error"))
     sizes = [s for s in ("small", "medium", "large") if s in K]
     L = []
 
     # ---- layout table (idea 1) ----
     L += [r"\begin{table}[t]", r"\caption{Idea 1: building the donor layout. Host is the IR1 NumPy/SciPy code on one core,"
-          r" GPU is the same arrays built with CuPy and cuSPARSE (median of 5, synchronised). Identical: all four arrays"
+          r" GPU is the same arrays built with CuPy and cuSPARSE (median of 5, synchronised, large from run 3). Identical: all four arrays"
           r" equal the host ones bit for bit.}", r"\label{tab:layout}", r"\small",
           r"\begin{tabular}{@{}lrrrc@{}}", r"\toprule",
           r"Size (nnz) & Host ms & GPU ms & Speedup & Identical \\", r"\midrule"]
@@ -57,7 +63,7 @@ def main():
     L += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
 
     # ---- kernel table ----
-    L += [r"\begin{table*}[t]", r"\caption{Kernel time in ms (CUDA events, median of 3 trials of 10, includes the row"
+    L += [r"\begin{table*}[t]", r"\caption{Kernel time in ms (CUDA events, median of 3 trials of 10, or 8 trials for large from run 3, includes the row"
           r" normalisation) and speedup over the IR1 gather kernel. Max relative error is against the float64 reference"
           r" after normalisation. 128-thread blocks.}", r"\label{tab:kernels}", r"\small",
           r"\begin{tabular}{@{}l" + "rr" * len(sizes) + r"r@{}}", r"\toprule",
@@ -112,33 +118,35 @@ def main():
         L += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
 
     # ---- ncu ----
-    N = r.get("ncu", {})
-    if N.get("available"):
+    def ncu_table(N, size, label):
         kk = [k for k in ("pb_gather", "pb_gather_xr", "pb_gather_fm", "pb_gather_cs") if k in N["kernels"]]
         metrics = [("Duration (us)", ("Duration",), lambda v: v / 1e3, 0),
                    ("SM throughput (\\%)", ("Compute (SM) Throughput",), None, 1),
                    ("L1/TEX throughput (\\%)", ("L1/TEX Cache Throughput",), None, 1),
                    ("DRAM throughput (\\%)", ("DRAM Throughput",), None, 1),
-                   ("Instructions (M)", ("smsp__inst_executed.sum", "Executed Instructions"), lambda v: v / 1e6, 1),
-                   ("Active threads per instr.", ("smsp__thread_inst_executed_per_inst_executed.ratio",
-                                                  "Avg. Active Threads Per Warp"), None, 1),
+                   ("Instructions (M)", ("smsp__inst_executed.sum",), lambda v: v / 1e6, 1),
+                   ("Active threads per instr.", ("smsp__thread_inst_executed_per_inst_executed.ratio",), None, 1),
                    ("Warp cycles per issue", ("Warp Cycles Per Issued Instruction",), None, 1),
                    ("Registers per thread", ("Registers Per Thread",), None, 0),
                    ("Achieved occupancy (\\%)", ("Achieved Occupancy",), None, 1),
                    ("Shared bank conflicts (M)", ("l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum",), lambda v: v / 1e6, 2),
-                   ("Global load instr. (M)", ("smsp__sass_inst_executed_op_global_ld.sum",), lambda v: v / 1e6, 2),
                    ("L1/TEX bytes (MB)", ("l1tex__t_bytes.sum",), lambda v: v / 1e6, 0),
                    ("DRAM bytes read (MB)", ("dram__bytes_read.sum",), lambda v: v / 1e6, 0)]
-        L += [r"\begin{table}[t]", r"\caption{Nsight Compute, medium instance, one launch each (SM clock locked by"
-              r" Nsight, so durations exceed the event timings).}", r"\label{tab:ncu2}", r"\footnotesize",
-              r"\setlength{\tabcolsep}{3pt}", r"\begin{tabular}{@{}l" + "r" * len(kk) + r"@{}}", r"\toprule",
-              "Metric & " + " & ".join(k.replace("pb_", "").replace("_", "\\_") for k in kk) + r" \\", r"\midrule"]
+        out = [r"\begin{table}[t]", f"\\caption{{Nsight Compute, {size} instance, one launch each (SM clock locked at 585 MHz by"
+               r" Nsight, so durations exceed the event timings).}", f"\\label{{{label}}}", r"\footnotesize",
+               r"\setlength{\tabcolsep}{3pt}", r"\begin{tabular}{@{}l" + "r" * len(kk) + r"@{}}", r"\toprule",
+               "Metric & " + " & ".join(k.replace("pb_", "").replace("_", "\\_") for k in kk) + r" \\", r"\midrule"]
         for name, keys, tr, d in metrics:
             vals = [ncu_val(N["kernels"][k], *keys) for k in kk]
             if all(v is None for v in vals):
                 continue
-            L.append(name + " & " + " & ".join("--" if v is None else f((tr(v) if tr else v), d) for v in vals) + r" \\")
-        L += [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+            out.append(name + " & " + " & ".join("--" if v is None else f((tr(v) if tr else v), d) for v in vals) + r" \\")
+        return out + [r"\bottomrule", r"\end{tabular}", r"\end{table}", ""]
+
+    if r.get("ncu", {}).get("available"):
+        L += ncu_table(r["ncu"], "medium", "tab:ncu2")
+    if R3 and R3.get("ncu", {}).get("available"):
+        L += ncu_table(R3["ncu"], "large (run 3)", "tab:ncu-large")
 
     # ---- block sweep figure ----
     B = K.get("medium", {}).get("blocks")

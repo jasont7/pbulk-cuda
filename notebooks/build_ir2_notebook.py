@@ -10,6 +10,8 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_notebook as nb  # noqa: E402
 
 OUT = nb.ROOT / "notebooks" / "ir2_colab.ipynb"
+# Second notebook: the large size only, more trials, Nsight on large (run 3 in the report).
+LARGE_ARGS = ["--sizes", "large", "--stages", "kernel,ncu", "--ncu-size", "large", "--trials", "8"]
 
 INTRO = """# pbulk-cuda: Interim Report 2 experiments
 
@@ -43,12 +45,12 @@ print("END_IR2_RESULTS")
 """
 
 
-def build():
+def build(extra=None):
     snap = "# The code of the repository, packed by notebooks/build_notebook.py. Generated, do not edit.\n" \
            f'SNAPSHOT = "{nb.snapshot()}"\n'
     unpack = nb.UNPACK.replace("pbulk-cuda-ir1", "pbulk-cuda-ir2").replace("ir1_results.json", "ir2_results.json")
     cells = [nb.cell("markdown", INTRO), nb.cell("code", nb.CHECK_GPU), nb.cell("code", snap), nb.cell("code", unpack),
-             nb.cell("code", nb.DEPS), nb.cell("code", nb.TESTS), nb.cell("code", HARNESS), nb.cell("code", SUMMARY),
+             nb.cell("code", nb.DEPS), nb.cell("code", nb.TESTS), nb.cell("code", HARNESS if not extra else HARNESS.replace("*EXTRA_ARGS]", "*EXTRA_ARGS, " + ", ".join(repr(a) for a in extra) + "]")), nb.cell("code", SUMMARY),
              nb.cell("code", PRINT), nb.cell("code", nb.DOWNLOAD)]
     for i, c in enumerate(cells):
         c["id"] = f"cell-{i}"
@@ -61,3 +63,6 @@ def build():
 if __name__ == "__main__":
     OUT.write_text(json.dumps(build(), indent=1) + "\n")
     print(f"wrote {OUT} ({OUT.stat().st_size / 1024:.0f} KB)")
+    big = OUT.with_name("ir2_large_colab.ipynb")
+    big.write_text(json.dumps(build(LARGE_ARGS), indent=1) + "\n")
+    print(f"wrote {big}")

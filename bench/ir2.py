@@ -243,6 +243,8 @@ def main(argv=None):
     ap.add_argument("--sizes", default="small,medium,large")
     ap.add_argument("--stages", default="kernel,e2e,ncu,resources")
     ap.add_argument("--tiny", action="store_true", help="tiny sizes, fake-cupy dry run only")
+    ap.add_argument("--ncu-size", default="medium")
+    ap.add_argument("--trials", type=int, default=3)
     a = ap.parse_args(argv)
     from pbulk import gpu
     from bench.backends import get
@@ -259,7 +261,8 @@ def main(argv=None):
     if "kernel" in stages:
         for name in a.sizes.split(","):
             try:
-                r["kernel"][name], problems[name] = run_size(gpu, name, (TINY_SIZES if a.tiny else SIZES)[name], blocks=(name == "medium"))
+                r["kernel"][name], problems[name] = run_size(gpu, name, (TINY_SIZES if a.tiny else SIZES)[name],
+                                                             trials=a.trials, blocks=(name == "medium"))
             except Exception:  # noqa: BLE001
                 r["errors"].append({"stage": f"kernel/{name}", "trace": traceback.format_exc()[-3000:]})
                 print(traceback.format_exc(), flush=True)
@@ -280,7 +283,7 @@ def main(argv=None):
         r["resource_usage"] = profiling.resource_usage()
         save()
     if "ncu" in stages:
-        r["ncu"] = ncu_stage("medium")
+        r["ncu"] = ncu_stage(a.ncu_size)
         save()
     r["finished_utc"] = dt.datetime.now(dt.timezone.utc).isoformat()
     save()

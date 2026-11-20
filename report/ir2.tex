@@ -35,9 +35,8 @@ two limits. End to end, 93\% of the time is a host-side data layout step, not th
 kernel, the SM and the L1 cache are the busy units, not DRAM, because every nonzero costs a dependent
 mask lookup, 32 masked adds and a large share of warp shuffles. I propose three ideas backed by that
 analysis, estimate the gain of each, and implement and measure all three. Building the layout on
-the GPU is 12 to 15 times faster and cuts the medium pipeline from 670 ms to 130 ms. A fused mask stream
-with a transposed warp reduction makes the kernel 1.4 to 1.8 times faster on small and medium inputs,
-after a first version that spilled to local memory. A complement-based kernel cuts the adds 3.3 times
+the GPU is 13 to 15 times faster and cuts the medium pipeline from 670 ms to 130 ms. A fused mask stream
+with a transposed warp reduction makes the kernel 1.2 to 1.8 times faster across three input sizes, after a first version that spilled to local memory. A complement-based kernel cuts the adds 3.3 times
 but runs 2 times slower, and the profile shows why: shared-memory accumulators cost occupancy. Code: \url{https://github.com/jasont7/pbulk-cuda}.
 \end{abstract}
 
@@ -54,7 +53,7 @@ by 241,924 cells of 30 donors with an R script that takes about 17 minutes on th
 Interim Report 1 (IR1) gave two CUDA kernels. \code{pb\_scatter} adds every selected nonzero into the
 output with atomics. \code{pb\_gather} reorders the data so that one warp owns one (gene, donor)
 segment and adds each nonzero into $K$ register accumulators chosen by a bit mask. On synthetic data
-with the structure of the real data, gather was 15 to 40 times faster than scatter as a kernel.
+with the structure of the real data, gather was 5 to 40 times faster than scatter as a kernel, the gap growing with size.
 
 This report is the second milestone. Section~\ref{sec:analysis} profiles the IR1 code with Nsight
 Compute and a PRAM count. Section~\ref{sec:ideas} turns the analysis into three ideas, each with an
@@ -134,9 +133,9 @@ bandwidth from device memory. The two busy units are the L1/TEX cache (86\%) and
 which are coalesced (32 consecutive 4-byte words, four 32-byte sectors each), and \code{mask[col[i]]},
 which depends on the second load and is scattered. Within a segment the 32 lanes read 32 cells of one
 donor in increasing order, but with 8\% density neighbouring nonzeros of a gene are about 12 cells apart,
-so the 32 mask reads span roughly 1.5 KB and touch about 48 sectors. The mask array is small
-(200 KB on medium) and stays in L2 and L1, which explains why L1 is hot while DRAM is idle. By this
-count the mask lookup is about 85\% of the L1 sectors the loop requests.
+so the 32 mask reads land about 50 bytes apart and touch about 32 sectors, one per lane, against 8
+for \code{val} and \code{col} together. The mask array is small
+(200 KB on medium) and stays in L2 and L1, which explains why L1 is hot while DRAM is idle. By this count the mask lookup is about 80\% of the L1 sectors the loop requests.
 
 \paragraph{The arithmetic.} Every nonzero is offered to all 32 accumulators, even though $K = 30$ and
 on average only 19.5 bits of a mask are set. The PRAM work of the gather strategy is
@@ -187,7 +186,7 @@ sorted for free.
 
 \subsection{Idea 2: complement accumulation (less work)}
 
-\paragraph{Evidence.} The kernel is SM-bound and does $32N$ masked adds, almost half of which add zero.
+\paragraph{Evidence.} The kernel is SM-bound and does $32N$ masked adds, more than a third of which add zero.
 
 \paragraph{Idea.} Two changes reduce the work, not just its cost. First, a pseudo-bulk that takes more
 than half of its donor's cells is computed by its complement: $PB[p,g] = T_{gd} - \sum_{c \notin p} X[g,c]$,
@@ -216,7 +215,7 @@ It relies on knowing the segment total, which the donor layout provides for one 
 
 \subsection{Idea 3: a fused mask stream and a transposed reduction}
 
-\paragraph{Evidence.} L1/TEX is at 86\%, and the scattered mask lookup makes about 85\% of the loop's L1
+\paragraph{Evidence.} L1/TEX is at 86\%, and the scattered mask lookup makes about 80\% of the loop's L1
 sector requests. The reduction does 160 shuffles per segment and is larger than the main loop.
 
 \paragraph{Idea.} (a) \emph{Fused mask stream.} The layout stores \code{mval}$[i] = \code{mask}[\code{col}[i]]$
@@ -287,8 +286,7 @@ $S X^{\top}$ as a cuSPARSE sparse-sparse product through \code{cupyx}, with $S$ 
 matrix~\cite{cusparse}.
 
 \paragraph{Effort and limitations.}
-I checked every kernel against the reference and the emulator, and every number in Section~\ref{sec:exp} comes
-from two Colab runs: the failed first version of Idea 3 from the first, everything else from the second. Idea 1 was the easiest, because the primitives exist in
+I checked every kernel against the reference and the emulator, and every number in Section~\ref{sec:exp} comes from three Colab runs on one day, described in Section~\ref{sec:exp}. Idea 1 was the easiest, because the primitives exist in
 CuPy. Idea 2 took the most care: the complement makes the sums the difference of two float32 values, so
 it loses a little precision when a pseudo-bulk takes nearly all of a donor's cells. Idea 3's
 transposed reduction is short but easy to get wrong in two ways. Its index logic is checked by the
@@ -316,11 +314,8 @@ per donor and nonzeros per cell will make segment lengths uneven.
 \section{Conclusion}
 
 Profiling the IR1 code showed that its pipeline was host-bound and its kernel was bound by on-chip work,
-not DRAM. Moving the layout to the GPU fixed the first (5.2 times end to end on medium), and the fused
-kernel moved the second most of the way to the memory roof (1.4 times, DRAM throughput from 30\% to
-70\%). The complement idea showed that a cut in PRAM work does not survive SIMT costs when it pushes
-accumulators out of registers, which sets the next step: keep the work cut in registers, profile the
-large input, and remove the host-side preparation that now dominates the pipeline.
+not DRAM. Moving the layout to the GPU fixed the first (5.2 times end to end on medium), and the fused kernel moved the second to the memory roof (1.2 to 1.8 times, DRAM throughput from 30\% to 70\% on medium and 82\% on large). The complement idea showed that a cut in PRAM work does not survive SIMT costs when it pushes
+accumulators out of registers, which sets the next step: keep the work cut in registers, profile at full clock speed, and remove the host-side preparation that now dominates the pipeline.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{refs}

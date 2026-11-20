@@ -1,0 +1,1706 @@
+{
+ "schema": "ir2-1",
+ "meta": {
+  "backend": "cuda",
+  "data": "synthetic (pbulk.synthetic)",
+  "created_utc": "2026-11-20T02:56:56+00:00",
+  "gpu": {
+   "name": "Tesla T4",
+   "totalGlobalMem": 15637086208,
+   "sharedMemPerBlock": 49152,
+   "regsPerBlock": 65536,
+   "warpSize": 32,
+   "maxThreadsPerBlock": 1024,
+   "maxThreadsDim": [
+    1024,
+    1024,
+    64
+   ],
+   "maxGridSize": [
+    2147483647,
+    65535,
+    65535
+   ],
+   "clockRate": 1590000,
+   "totalConstMem": 65536,
+   "major": 7,
+   "minor": 5,
+   "textureAlignment": 512,
+   "texturePitchAlignment": 32,
+   "multiProcessorCount": 40,
+   "kernelExecTimeoutEnabled": 0,
+   "integrated": 0,
+   "canMapHostMemory": 1,
+   "computeMode": 0,
+   "maxTexture1D": 131072,
+   "maxTexture2D": [
+    131072,
+    65536
+   ],
+   "maxTexture3D": [
+    16384,
+    16384,
+    16384
+   ],
+   "concurrentKernels": 1,
+   "ECCEnabled": 1,
+   "pciBusID": 0,
+   "pciDeviceID": 4,
+   "pciDomainID": 0,
+   "tccDriver": 0,
+   "memoryClockRate": 5001000,
+   "memoryBusWidth": 256,
+   "l2CacheSize": 4194304,
+   "maxThreadsPerMultiProcessor": 1024,
+   "isMultiGpuBoard": 0,
+   "cooperativeLaunch": 1,
+   "cooperativeMultiDeviceLaunch": false,
+   "maxTexture1DMipmap": 32768,
+   "maxTexture1DLayered": [
+    32768,
+    2048
+   ],
+   "maxTexture2DMipmap": [
+    32768,
+    32768
+   ],
+   "maxTexture2DLinear": [
+    131072,
+    65000,
+    2097120
+   ],
+   "maxTexture2DLayered": [
+    32768,
+    32768,
+    2048
+   ],
+   "maxTexture2DGather": [
+    32768,
+    32768
+   ],
+   "maxTexture3DAlt": [
+    8192,
+    8192,
+    32768
+   ],
+   "maxTextureCubemap": 32768,
+   "maxTextureCubemapLayered": [
+    32768,
+    2046
+   ],
+   "maxSurface1D": 32768,
+   "maxSurface1DLayered": [
+    32768,
+    2048
+   ],
+   "maxSurface2D": [
+    131072,
+    65536
+   ],
+   "maxSurface2DLayered": [
+    32768,
+    32768,
+    2048
+   ],
+   "maxSurface3D": [
+    16384,
+    16384,
+    16384
+   ],
+   "maxSurfaceCubemap": 32768,
+   "maxSurfaceCubemapLayered": [
+    32768,
+    2046
+   ],
+   "surfaceAlignment": 512,
+   "asyncEngineCount": 3,
+   "unifiedAddressing": 1,
+   "streamPrioritiesSupported": 1,
+   "globalL1CacheSupported": 1,
+   "localL1CacheSupported": 1,
+   "sharedMemPerMultiprocessor": 65536,
+   "regsPerMultiprocessor": 65536,
+   "managedMemory": 1,
+   "multiGpuBoardGroupID": 0,
+   "hostNativeAtomicSupported": 0,
+   "pageableMemoryAccess": 0,
+   "concurrentManagedAccess": 1,
+   "computePreemptionSupported": 1,
+   "canUseHostPointerForRegisteredMem": 1,
+   "sharedMemPerBlockOptin": 65536,
+   "pageableMemoryAccessUsesHostPageTables": 0,
+   "directManagedMemAccessFromHost": 0,
+   "uuid": "o4T\u017e\u0604\ufffdZ&\ufffd-\ufffd\ufffd",
+   "luid": "",
+   "luidDeviceNodeMask": 0,
+   "persistingL2CacheMaxSize": 0,
+   "maxBlocksPerMultiProcessor": 16,
+   "accessPolicyMaxWindowSize": 0,
+   "reservedSharedMemPerBlock": 0,
+   "deviceOverlap": 1,
+   "maxTexture1DLinear": 268435456,
+   "singleToDoublePrecisionPerfRatio": 32,
+   "cupy": "14.0.1"
+  },
+  "cpu": "Intel(R) Xeon(R) CPU @ 2.00GHz",
+  "cpu_count": 2,
+  "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "python": "3.13.16",
+  "numpy": "2.4.6",
+  "scipy": "1.16.3",
+  "threads_env": {
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  },
+  "cpp_flags": [
+   "-O3",
+   "-std=c++17",
+   "-shared",
+   "-fPIC"
+  ],
+  "kernels_sha256": "81c92692ad740ac7356696816b75e5e4fa964e32544dc6fde4885b8197703239"
+ },
+ "errors": [],
+ "kernel": {
+  "large": {
+   "size": "large",
+   "genes": 8000,
+   "cells": 120000,
+   "donors": 30,
+   "K": 30,
+   "n_pb": 900,
+   "nnz": 76800000,
+   "selections": 2364859,
+   "trials": 8,
+   "repeats": 10,
+   "layout_host_ms": 2636.870433000013,
+   "work_cs": {
+    "nnz": 76800000,
+    "mean_set_bits": 8.66205,
+    "flipped_pseudo_bulks": 645,
+    "complement_adds": 742045440,
+    "masked_adds": 2457600000,
+    "warp_iterations": 2516399,
+    "lane_steps_baseline": 80524768,
+    "lane_steps_cs": 36637942,
+    "mean_warp_max_set_bits": 13.559671180921626,
+    "mean_unflipped_set_bits": 17.5375
+   },
+   "codes_host_ms": 164.1598429999931,
+   "raw_upload_ms": 959.7724679999828,
+   "raw_bytes": 634286084,
+   "layout_gpu_ms": [
+    213.53501300006883,
+    202.21770099999503,
+    193.85240099995826,
+    194.41646899997522,
+    193.9643819999901
+   ],
+   "layout_identical": {
+    "seg_ptr": true,
+    "col": true,
+    "val": true,
+    "mask": true
+   },
+   "fm_prep_gpu_ms": [
+    2.742742000009457,
+    2.630235999959041,
+    2.6229250000824322,
+    2.6095349999195605,
+    2.625682000029883
+   ],
+   "cs_prep_gpu_ms": [
+    3.045140000040192,
+    2.8674280000586805,
+    2.8300559999934194,
+    2.840042999991965,
+    2.884585999936462
+   ],
+   "scatter_max_rel_err": 1.2061870785653044e-06,
+   "scatter_ok": true,
+   "scatter_ms": [
+    [
+     242.2353973388672,
+     242.6490936279297,
+     245.50143432617188,
+     243.16802978515625,
+     243.24864196777344,
+     243.03184509277344,
+     243.429443359375,
+     242.88230895996094,
+     242.1910400390625,
+     243.0273895263672
+    ],
+    [
+     243.78536987304688,
+     243.43609619140625,
+     241.45274353027344,
+     243.55215454101562,
+     243.14886474609375,
+     243.1512908935547,
+     243.82998657226562,
+     241.2467498779297,
+     244.14700317382812,
+     243.3515167236328
+    ],
+    [
+     242.2645721435547,
+     242.62860107421875,
+     242.3203582763672,
+     243.2716827392578,
+     242.89321899414062,
+     243.78346252441406,
+     242.65367126464844,
+     242.12889099121094,
+     242.09817504882812,
+     242.78016662597656
+    ],
+    [
+     242.39500427246094,
+     241.3957061767578,
+     243.12425231933594,
+     241.7860107421875,
+     242.66537475585938,
+     243.04595947265625,
+     242.79299926757812,
+     242.6898193359375,
+     242.43545532226562,
+     244.49754333496094
+    ],
+    [
+     242.69004821777344,
+     242.6736602783203,
+     243.52767944335938,
+     242.044921875,
+     242.1092529296875,
+     242.04978942871094,
+     241.85177612304688,
+     244.28732299804688,
+     242.3495635986328,
+     240.99807739257812
+    ],
+    [
+     243.47171020507812,
+     243.68960571289062,
+     242.58572387695312,
+     242.28067016601562,
+     242.90841674804688,
+     241.41510009765625,
+     241.2953643798828,
+     242.02239990234375,
+     240.70684814453125,
+     244.5281982421875
+    ],
+    [
+     242.48448181152344,
+     240.87930297851562,
+     242.02854919433594,
+     242.33509826660156,
+     240.69107055664062,
+     242.22543334960938,
+     241.6012420654297,
+     240.82850646972656,
+     241.03651428222656,
+     241.870849609375
+    ],
+    [
+     241.6315460205078,
+     240.46783447265625,
+     241.61231994628906,
+     241.24537658691406,
+     240.5899200439453,
+     240.71168518066406,
+     242.22808837890625,
+     240.23654174804688,
+     241.76844787597656,
+     240.37759399414062
+    ]
+   ],
+   "gather_max_rel_err": 2.151510140072429e-07,
+   "gather_ok": true,
+   "gather_ms": [
+    [
+     4.675487995147705,
+     4.652895927429199,
+     5.285439968109131,
+     5.458591938018799,
+     5.455904006958008,
+     5.927199840545654,
+     9.145759582519531,
+     9.189567565917969,
+     9.341471672058105,
+     9.359392166137695
+    ],
+    [
+     4.716991901397705,
+     4.6987199783325195,
+     5.177343845367432,
+     5.716288089752197,
+     5.732351779937744,
+     5.730271816253662,
+     8.556544303894043,
+     8.8920316696167,
+     8.886112213134766,
+     8.890015602111816
+    ],
+    [
+     4.725152015686035,
+     4.709504127502441,
+     4.714176177978516,
+     4.720160007476807,
+     5.774752140045166,
+     6.000703811645508,
+     6.674208164215088,
+     9.376383781433105,
+     9.340928077697754,
+     9.328384399414062
+    ],
+    [
+     4.6981120109558105,
+     4.683104038238525,
+     5.512479782104492,
+     5.542751789093018,
+     5.5346879959106445,
+     5.5766401290893555,
+     8.681504249572754,
+     8.67404842376709,
+     8.882207870483398,
+     8.884736061096191
+    ],
+    [
+     4.932960033416748,
+     4.986815929412842,
+     4.987936019897461,
+     4.992063999176025,
+     4.985536098480225,
+     7.147136211395264,
+     7.288544178009033,
+     8.300543785095215,
+     9.11673641204834,
+     9.335295677185059
+    ],
+    [
+     4.673215866088867,
+     4.679103851318359,
+     4.680768013000488,
+     5.036448001861572,
+     6.3303680419921875,
+     6.313888072967529,
+     6.327775955200195,
+     9.582304000854492,
+     9.589311599731445,
+     9.584992408752441
+    ],
+    [
+     4.766208171844482,
+     4.738815784454346,
+     4.714560031890869,
+     4.736032009124756,
+     6.284287929534912,
+     6.635903835296631,
+     6.676479816436768,
+     8.668767929077148,
+     9.580575942993164,
+     9.595487594604492
+    ],
+    [
+     5.036159992218018,
+     5.033247947692871,
+     5.013279914855957,
+     5.023935794830322,
+     6.067647933959961,
+     6.931168079376221,
+     6.931359767913818,
+     8.450528144836426,
+     8.671263694763184,
+     8.796319961547852
+    ]
+   ],
+   "gather_xr_max_rel_err": 2.151510140072429e-07,
+   "gather_xr_ok": true,
+   "gather_xr_ms": [
+    [
+     6.855807781219482,
+     6.873216152191162,
+     6.879104137420654,
+     6.87497615814209,
+     6.903903961181641,
+     6.878496170043945,
+     6.784063816070557,
+     6.715104103088379,
+     6.711391925811768,
+     6.635551929473877
+    ],
+    [
+     6.551551818847656,
+     6.586463928222656,
+     6.674655914306641,
+     6.7024641036987305,
+     6.690783977508545,
+     6.67852783203125,
+     6.688767910003662,
+     6.604767799377441,
+     6.533408164978027,
+     6.555456161499023
+    ],
+    [
+     6.6984639167785645,
+     6.688767910003662,
+     6.68668794631958,
+     6.672575950622559,
+     6.687424182891846,
+     6.677440166473389,
+     6.7051520347595215,
+     6.729695796966553,
+     6.562975883483887,
+     6.570015907287598
+    ],
+    [
+     6.414303779602051,
+     6.559711933135986,
+     6.686304092407227,
+     6.684671878814697,
+     6.678239822387695,
+     6.690239906311035,
+     6.698624134063721,
+     6.583424091339111,
+     6.541952133178711,
+     6.5266242027282715
+    ],
+    [
+     6.867136001586914,
+     6.864192008972168,
+     6.862080097198486,
+     6.858496189117432,
+     6.883520126342773,
+     6.876287937164307,
+     6.764927864074707,
+     6.718400001525879,
+     6.696928024291992,
+     6.571968078613281
+    ],
+    [
+     6.851327896118164,
+     6.848512172698975,
+     6.875552177429199,
+     6.840415954589844,
+     6.846432209014893,
+     6.83625602722168,
+     6.832159996032715,
+     6.839231967926025,
+     6.675136089324951,
+     6.694687843322754
+    ],
+    [
+     6.856256008148193,
+     6.841536045074463,
+     6.832831859588623,
+     6.852640151977539,
+     6.863584041595459,
+     6.843743801116943,
+     6.848512172698975,
+     6.851967811584473,
+     6.733503818511963,
+     6.68671989440918
+    ],
+    [
+     6.5054402351379395,
+     6.5316481590271,
+     6.529024124145508,
+     6.541696071624756,
+     6.535391807556152,
+     6.537312030792236,
+     6.53926420211792,
+     6.5457282066345215,
+     6.528384208679199,
+     6.542367935180664
+    ]
+   ],
+   "gather_fm_max_rel_err": 2.151510140072429e-07,
+   "gather_fm_ok": true,
+   "gather_fm_ms": [
+    [
+     4.937856197357178,
+     4.931359767913818,
+     4.928063869476318,
+     4.928224086761475,
+     4.933504104614258,
+     4.932191848754883,
+     4.935743808746338,
+     4.941567897796631,
+     4.937503814697266,
+     4.923423767089844
+    ],
+    [
+     4.916192054748535,
+     4.91315221786499,
+     4.914783954620361,
+     4.982783794403076,
+     4.982528209686279,
+     4.993504047393799,
+     4.989151954650879,
+     4.9805121421813965,
+     4.977215766906738,
+     4.9967041015625
+    ],
+    [
+     4.851712226867676,
+     4.835391998291016,
+     4.864480018615723,
+     4.855167865753174,
+     4.894720077514648,
+     4.902048110961914,
+     4.908991813659668,
+     4.927487850189209,
+     4.982367992401123,
+     4.979104042053223
+    ],
+    [
+     4.8396477699279785,
+     4.818943977355957,
+     4.8230719566345215,
+     4.8330559730529785,
+     4.822336196899414,
+     4.8336639404296875,
+     4.833312034606934,
+     4.907072067260742,
+     4.895008087158203,
+     4.9047040939331055
+    ],
+    [
+     4.926623821258545,
+     4.927455902099609,
+     4.929887771606445,
+     4.929120063781738,
+     4.8506879806518555,
+     4.748256206512451,
+     4.725535869598389,
+     4.728831768035889,
+     4.728831768035889,
+     4.726719856262207
+    ],
+    [
+     4.902944087982178,
+     4.898111820220947,
+     4.91103982925415,
+     4.907360076904297,
+     4.903200149536133,
+     4.892576217651367,
+     4.906208038330078,
+     4.934879779815674,
+     4.989408016204834,
+     4.980959892272949
+    ],
+    [
+     5.001215934753418,
+     4.98144006729126,
+     4.990943908691406,
+     4.980735778808594,
+     5.094240188598633,
+     5.074975967407227,
+     5.090943813323975,
+     5.074975967407227,
+     5.092735767364502,
+     5.086592197418213
+    ],
+    [
+     4.911104202270508,
+     4.89792013168335,
+     4.910912036895752,
+     4.90393590927124,
+     4.909056186676025,
+     4.904575824737549,
+     4.912576198577881,
+     4.895232200622559,
+     4.897088050842285,
+     4.9073920249938965
+    ]
+   ],
+   "gather_cs_max_rel_err": 7.008001465287794e-07,
+   "gather_cs_ok": true,
+   "gather_cs_ms": [
+    [
+     12.466591835021973,
+     11.798656463623047,
+     10.918720245361328,
+     10.565695762634277,
+     10.230496406555176,
+     10.167584419250488,
+     10.0066556930542,
+     10.000384330749512,
+     9.977855682373047,
+     9.979616165161133
+    ],
+    [
+     13.748671531677246,
+     12.152864456176758,
+     10.86137580871582,
+     10.742207527160645,
+     10.195584297180176,
+     10.171039581298828,
+     10.014528274536133,
+     10.025055885314941,
+     9.977439880371094,
+     9.966048240661621
+    ],
+    [
+     13.60591983795166,
+     11.890687942504883,
+     11.280415534973145,
+     10.847200393676758,
+     10.350591659545898,
+     10.172863960266113,
+     10.094367980957031,
+     9.991935729980469,
+     9.986047744750977,
+     9.988160133361816
+    ],
+    [
+     13.274815559387207,
+     12.237119674682617,
+     11.150303840637207,
+     10.803199768066406,
+     10.369024276733398,
+     10.301440238952637,
+     10.158047676086426,
+     10.102815628051758,
+     9.991488456726074,
+     9.981823921203613
+    ],
+    [
+     12.775391578674316,
+     11.925312042236328,
+     11.283072471618652,
+     10.766143798828125,
+     10.61683177947998,
+     10.250495910644531,
+     10.209024429321289,
+     10.180607795715332,
+     10.172160148620605,
+     10.16921615600586
+    ],
+    [
+     13.564640045166016,
+     12.154879570007324,
+     11.491231918334961,
+     10.880288124084473,
+     10.384384155273438,
+     10.349632263183594,
+     10.146495819091797,
+     10.143584251403809,
+     10.150848388671875,
+     10.153984069824219
+    ],
+    [
+     13.527775764465332,
+     12.13644790649414,
+     11.292608261108398,
+     10.887200355529785,
+     10.467583656311035,
+     10.399744033813477,
+     10.358880043029785,
+     10.341407775878906,
+     10.346688270568848,
+     10.355551719665527
+    ],
+    [
+     12.96998405456543,
+     12.316672325134277,
+     11.53433609008789,
+     10.939647674560547,
+     10.823200225830078,
+     10.41756820678711,
+     10.383359909057617,
+     10.363519668579102,
+     10.349408149719238,
+     10.35200023651123
+    ]
+   ],
+   "cusparse_error": "OutOfMemoryError('Out of memory allocating 36,355,770,880 bytes (allocated so far: 3,763,043,840 bytes).')"
+  }
+ },
+ "end_to_end": {},
+ "ncu": {
+  "available": true,
+  "tool": "/usr/local/cuda/bin/ncu",
+  "size": "large",
+  "kernels": {
+   "pb_gather": {
+    "dram__bytes_read.sum": {
+     "value": "1,052,536,928",
+     "unit": "byte"
+    },
+    "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": {
+     "value": "0",
+     "unit": ""
+    },
+    "l1tex__t_bytes.sum": {
+     "value": "2,830,138,560",
+     "unit": "byte"
+    },
+    "smsp__inst_executed.sum": {
+     "value": "447,028,294",
+     "unit": "inst"
+    },
+    "smsp__sass_inst_executed_op_global_ld.sum": {
+     "value": "8,029,197",
+     "unit": "inst"
+    },
+    "smsp__sass_inst_executed_op_shared_ld.sum": {
+     "value": "0",
+     "unit": "inst"
+    },
+    "smsp__thread_inst_executed_per_inst_executed.ratio": {
+     "value": "25.09",
+     "unit": ""
+    },
+    "DRAM Frequency": {
+     "value": "4,991,954,906.48",
+     "unit": "hz"
+    },
+    "SM Frequency": {
+     "value": "584,999,332.78",
+     "unit": "hz"
+    },
+    "Elapsed Cycles": {
+     "value": "4,383,853",
+     "unit": "cycle"
+    },
+    "Memory Throughput": {
+     "value": "61.47",
+     "unit": "%"
+    },
+    "DRAM Throughput": {
+     "value": "45.52",
+     "unit": "%"
+    },
+    "Duration": {
+     "value": "7,493,760",
+     "unit": "ns"
+    },
+    "L1/TEX Cache Throughput": {
+     "value": "77.77",
+     "unit": "%"
+    },
+    "L2 Cache Throughput": {
+     "value": "42.49",
+     "unit": "%"
+    },
+    "SM Active Cycles": {
+     "value": "4,376,749.30",
+     "unit": "cycle"
+    },
+    "Compute (SM) Throughput": {
+     "value": "63.76",
+     "unit": "%"
+    },
+    "Local Memory Spilling Requests": {
+     "value": "0",
+     "unit": ""
+    },
+    "Local Memory Spilling Request Overhead": {
+     "value": "no data",
+     "unit": "%"
+    },
+    "Mem Busy": {
+     "value": "42.49",
+     "unit": "%"
+    },
+    "Max Bandwidth": {
+     "value": "61.47",
+     "unit": "%"
+    },
+    "L1/TEX Hit Rate": {
+     "value": "3.66",
+     "unit": "%"
+    },
+    "L2 Hit Rate": {
+     "value": "79.72",
+     "unit": "%"
+    },
+    "Mem Pipes Busy": {
+     "value": "61.47",
+     "unit": "%"
+    },
+    "One or More Eligible": {
+     "value": "63.84",
+     "unit": "%"
+    },
+    "Issued Warp Per Scheduler": {
+     "value": "0.64",
+     "unit": ""
+    },
+    "No Eligible": {
+     "value": "36.16",
+     "unit": "%"
+    },
+    "Active Warps Per Scheduler": {
+     "value": "6.72",
+     "unit": "warp"
+    },
+    "Eligible Warps Per Scheduler": {
+     "value": "1.20",
+     "unit": "warp"
+    },
+    "Warp Cycles Per Issued Instruction": {
+     "value": "10.53",
+     "unit": "cycle"
+    },
+    "Warp Cycles Per Executed Instruction": {
+     "value": "10.53",
+     "unit": "cycle"
+    },
+    "Avg. Active Threads Per Warp": {
+     "value": "25.09",
+     "unit": ""
+    },
+    "Avg. Not Predicated Off Threads Per Warp": {
+     "value": "24.94",
+     "unit": ""
+    },
+    "Avg. Executed Instructions Per Scheduler": {
+     "value": "2,793,926.84",
+     "unit": "inst"
+    },
+    "Executed Instructions": {
+     "value": "447,028,294",
+     "unit": "inst"
+    },
+    "Avg. Issued Instructions Per Scheduler": {
+     "value": "2,793,976.53",
+     "unit": "inst"
+    },
+    "Issued Instructions": {
+     "value": "447,036,245",
+     "unit": "inst"
+    },
+    "Block Size": {
+     "value": "128",
+     "unit": ""
+    },
+    "Function Cache Configuration": {
+     "value": "CachePreferNone",
+     "unit": ""
+    },
+    "Grid Size": {
+     "value": "60,000",
+     "unit": ""
+    },
+    "Registers Per Thread": {
+     "value": "65",
+     "unit": "register/thread"
+    },
+    "Shared Memory Configuration Size": {
+     "value": "32,768",
+     "unit": "byte"
+    },
+    "Driver Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "Dynamic Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "Static Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "# SMs": {
+     "value": "40",
+     "unit": "SM"
+    },
+    "Stack Size": {
+     "value": "1,024",
+     "unit": ""
+    },
+    "Threads": {
+     "value": "7,680,000",
+     "unit": "thread"
+    },
+    "# TPCs": {
+     "value": "20",
+     "unit": ""
+    },
+    "Enabled TPC IDs": {
+     "value": "all",
+     "unit": ""
+    },
+    "Uses Green Context": {
+     "value": "0",
+     "unit": ""
+    },
+    "Waves Per SM": {
+     "value": "214.29",
+     "unit": ""
+    },
+    "Block Limit SM": {
+     "value": "16",
+     "unit": "block"
+    },
+    "Block Limit Registers": {
+     "value": "7",
+     "unit": "block"
+    },
+    "Block Limit Shared Mem": {
+     "value": "16",
+     "unit": "block"
+    },
+    "Block Limit Warps": {
+     "value": "8",
+     "unit": "block"
+    },
+    "Theoretical Active Warps per SM": {
+     "value": "28",
+     "unit": "warp"
+    },
+    "Theoretical Occupancy": {
+     "value": "87.50",
+     "unit": "%"
+    },
+    "Achieved Occupancy": {
+     "value": "84.13",
+     "unit": "%"
+    },
+    "Achieved Active Warps Per SM": {
+     "value": "26.92",
+     "unit": "warp"
+    }
+   },
+   "pb_gather_xr": {
+    "dram__bytes_read.sum": {
+     "value": "1,052,559,008",
+     "unit": "byte"
+    },
+    "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": {
+     "value": "0",
+     "unit": ""
+    },
+    "l1tex__t_bytes.sum": {
+     "value": "2,861,636,832",
+     "unit": "byte"
+    },
+    "smsp__inst_executed.sum": {
+     "value": "285,508,294",
+     "unit": "inst"
+    },
+    "smsp__sass_inst_executed_op_global_ld.sum": {
+     "value": "8,029,197",
+     "unit": "inst"
+    },
+    "smsp__sass_inst_executed_op_shared_ld.sum": {
+     "value": "0",
+     "unit": "inst"
+    },
+    "smsp__thread_inst_executed_per_inst_executed.ratio": {
+     "value": "30.73",
+     "unit": ""
+    },
+    "DRAM Frequency": {
+     "value": "4,993,523,492.92",
+     "unit": "hz"
+    },
+    "SM Frequency": {
+     "value": "585,004,155.41",
+     "unit": "hz"
+    },
+    "Elapsed Cycles": {
+     "value": "3,153,505",
+     "unit": "cycle"
+    },
+    "Memory Throughput": {
+     "value": "63.56",
+     "unit": "%"
+    },
+    "DRAM Throughput": {
+     "value": "63.25",
+     "unit": "%"
+    },
+    "Duration": {
+     "value": "5,390,560",
+     "unit": "ns"
+    },
+    "L1/TEX Cache Throughput": {
+     "value": "63.62",
+     "unit": "%"
+    },
+    "L2 Cache Throughput": {
+     "value": "59.24",
+     "unit": "%"
+    },
+    "SM Active Cycles": {
+     "value": "3,149,133.08",
+     "unit": "cycle"
+    },
+    "Compute (SM) Throughput": {
+     "value": "56.62",
+     "unit": "%"
+    },
+    "Local Memory Spilling Requests": {
+     "value": "0",
+     "unit": ""
+    },
+    "Local Memory Spilling Request Overhead": {
+     "value": "no data",
+     "unit": "%"
+    },
+    "Mem Busy": {
+     "value": "59.24",
+     "unit": "%"
+    },
+    "Max Bandwidth": {
+     "value": "63.56",
+     "unit": "%"
+    },
+    "L1/TEX Hit Rate": {
+     "value": "3.40",
+     "unit": "%"
+    },
+    "L2 Hit Rate": {
+     "value": "79.75",
+     "unit": "%"
+    },
+    "Mem Pipes Busy": {
+     "value": "25.30",
+     "unit": "%"
+    },
+    "One or More Eligible": {
+     "value": "56.69",
+     "unit": "%"
+    },
+    "Issued Warp Per Scheduler": {
+     "value": "0.57",
+     "unit": ""
+    },
+    "No Eligible": {
+     "value": "43.31",
+     "unit": "%"
+    },
+    "Active Warps Per Scheduler": {
+     "value": "6.53",
+     "unit": "warp"
+    },
+    "Eligible Warps Per Scheduler": {
+     "value": "1.04",
+     "unit": "warp"
+    },
+    "Warp Cycles Per Issued Instruction": {
+     "value": "11.51",
+     "unit": "cycle"
+    },
+    "Warp Cycles Per Executed Instruction": {
+     "value": "11.51",
+     "unit": "cycle"
+    },
+    "Avg. Active Threads Per Warp": {
+     "value": "30.73",
+     "unit": ""
+    },
+    "Avg. Not Predicated Off Threads Per Warp": {
+     "value": "30.50",
+     "unit": ""
+    },
+    "Avg. Executed Instructions Per Scheduler": {
+     "value": "1,784,426.84",
+     "unit": "inst"
+    },
+    "Executed Instructions": {
+     "value": "285,508,294",
+     "unit": "inst"
+    },
+    "Avg. Issued Instructions Per Scheduler": {
+     "value": "1,784,463.30",
+     "unit": "inst"
+    },
+    "Issued Instructions": {
+     "value": "285,514,128",
+     "unit": "inst"
+    },
+    "Block Size": {
+     "value": "128",
+     "unit": ""
+    },
+    "Function Cache Configuration": {
+     "value": "CachePreferNone",
+     "unit": ""
+    },
+    "Grid Size": {
+     "value": "60,000",
+     "unit": ""
+    },
+    "Registers Per Thread": {
+     "value": "65",
+     "unit": "register/thread"
+    },
+    "Shared Memory Configuration Size": {
+     "value": "32,768",
+     "unit": "byte"
+    },
+    "Driver Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "Dynamic Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "Static Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "# SMs": {
+     "value": "40",
+     "unit": "SM"
+    },
+    "Stack Size": {
+     "value": "1,024",
+     "unit": ""
+    },
+    "Threads": {
+     "value": "7,680,000",
+     "unit": "thread"
+    },
+    "# TPCs": {
+     "value": "20",
+     "unit": ""
+    },
+    "Enabled TPC IDs": {
+     "value": "all",
+     "unit": ""
+    },
+    "Uses Green Context": {
+     "value": "0",
+     "unit": ""
+    },
+    "Waves Per SM": {
+     "value": "214.29",
+     "unit": ""
+    },
+    "Block Limit SM": {
+     "value": "16",
+     "unit": "block"
+    },
+    "Block Limit Registers": {
+     "value": "7",
+     "unit": "block"
+    },
+    "Block Limit Shared Mem": {
+     "value": "16",
+     "unit": "block"
+    },
+    "Block Limit Warps": {
+     "value": "8",
+     "unit": "block"
+    },
+    "Theoretical Active Warps per SM": {
+     "value": "28",
+     "unit": "warp"
+    },
+    "Theoretical Occupancy": {
+     "value": "87.50",
+     "unit": "%"
+    },
+    "Achieved Occupancy": {
+     "value": "81.69",
+     "unit": "%"
+    },
+    "Achieved Active Warps Per SM": {
+     "value": "26.14",
+     "unit": "warp"
+    }
+   },
+   "pb_gather_fm": {
+    "dram__bytes_read.sum": {
+     "value": "1,038,831,680",
+     "unit": "byte"
+    },
+    "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": {
+     "value": "0",
+     "unit": ""
+    },
+    "l1tex__t_bytes.sum": {
+     "value": "914,067,776",
+     "unit": "byte"
+    },
+    "smsp__inst_executed.sum": {
+     "value": "280,235,496",
+     "unit": "inst"
+    },
+    "smsp__sass_inst_executed_op_global_ld.sum": {
+     "value": "5,512,798",
+     "unit": "inst"
+    },
+    "smsp__sass_inst_executed_op_shared_ld.sum": {
+     "value": "0",
+     "unit": "inst"
+    },
+    "smsp__thread_inst_executed_per_inst_executed.ratio": {
+     "value": "30.73",
+     "unit": ""
+    },
+    "DRAM Frequency": {
+     "value": "4,982,548,577.93",
+     "unit": "hz"
+    },
+    "SM Frequency": {
+     "value": "585,004,316.09",
+     "unit": "hz"
+    },
+    "Elapsed Cycles": {
+     "value": "2,401,779",
+     "unit": "cycle"
+    },
+    "Memory Throughput": {
+     "value": "82.18",
+     "unit": "%"
+    },
+    "DRAM Throughput": {
+     "value": "82.18",
+     "unit": "%"
+    },
+    "Duration": {
+     "value": "4,105,568",
+     "unit": "ns"
+    },
+    "L1/TEX Cache Throughput": {
+     "value": "47.43",
+     "unit": "%"
+    },
+    "L2 Cache Throughput": {
+     "value": "25.03",
+     "unit": "%"
+    },
+    "SM Active Cycles": {
+     "value": "2,392,836.67",
+     "unit": "cycle"
+    },
+    "Compute (SM) Throughput": {
+     "value": "73.09",
+     "unit": "%"
+    },
+    "Local Memory Spilling Requests": {
+     "value": "0",
+     "unit": ""
+    },
+    "Local Memory Spilling Request Overhead": {
+     "value": "no data",
+     "unit": "%"
+    },
+    "Mem Busy": {
+     "value": "25.03",
+     "unit": "%"
+    },
+    "Max Bandwidth": {
+     "value": "82.18",
+     "unit": "%"
+    },
+    "L1/TEX Hit Rate": {
+     "value": "12.64",
+     "unit": "%"
+    },
+    "L2 Hit Rate": {
+     "value": "37.11",
+     "unit": "%"
+    },
+    "Mem Pipes Busy": {
+     "value": "28.03",
+     "unit": "%"
+    },
+    "One or More Eligible": {
+     "value": "73.13",
+     "unit": "%"
+    },
+    "Issued Warp Per Scheduler": {
+     "value": "0.73",
+     "unit": ""
+    },
+    "No Eligible": {
+     "value": "26.87",
+     "unit": "%"
+    },
+    "Active Warps Per Scheduler": {
+     "value": "6.51",
+     "unit": "warp"
+    },
+    "Eligible Warps Per Scheduler": {
+     "value": "1.50",
+     "unit": "warp"
+    },
+    "Warp Cycles Per Issued Instruction": {
+     "value": "8.89",
+     "unit": "cycle"
+    },
+    "Warp Cycles Per Executed Instruction": {
+     "value": "8.89",
+     "unit": "cycle"
+    },
+    "Avg. Active Threads Per Warp": {
+     "value": "30.73",
+     "unit": ""
+    },
+    "Avg. Not Predicated Off Threads Per Warp": {
+     "value": "30.50",
+     "unit": ""
+    },
+    "Avg. Executed Instructions Per Scheduler": {
+     "value": "1,751,471.85",
+     "unit": "inst"
+    },
+    "Executed Instructions": {
+     "value": "280,235,496",
+     "unit": "inst"
+    },
+    "Avg. Issued Instructions Per Scheduler": {
+     "value": "1,751,508.14",
+     "unit": "inst"
+    },
+    "Issued Instructions": {
+     "value": "280,241,302",
+     "unit": "inst"
+    },
+    "Block Size": {
+     "value": "128",
+     "unit": ""
+    },
+    "Function Cache Configuration": {
+     "value": "CachePreferNone",
+     "unit": ""
+    },
+    "Grid Size": {
+     "value": "60,000",
+     "unit": ""
+    },
+    "Registers Per Thread": {
+     "value": "65",
+     "unit": "register/thread"
+    },
+    "Shared Memory Configuration Size": {
+     "value": "32,768",
+     "unit": "byte"
+    },
+    "Driver Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "Dynamic Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "Static Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "# SMs": {
+     "value": "40",
+     "unit": "SM"
+    },
+    "Stack Size": {
+     "value": "1,024",
+     "unit": ""
+    },
+    "Threads": {
+     "value": "7,680,000",
+     "unit": "thread"
+    },
+    "# TPCs": {
+     "value": "20",
+     "unit": ""
+    },
+    "Enabled TPC IDs": {
+     "value": "all",
+     "unit": ""
+    },
+    "Uses Green Context": {
+     "value": "0",
+     "unit": ""
+    },
+    "Waves Per SM": {
+     "value": "214.29",
+     "unit": ""
+    },
+    "Block Limit SM": {
+     "value": "16",
+     "unit": "block"
+    },
+    "Block Limit Registers": {
+     "value": "7",
+     "unit": "block"
+    },
+    "Block Limit Shared Mem": {
+     "value": "16",
+     "unit": "block"
+    },
+    "Block Limit Warps": {
+     "value": "8",
+     "unit": "block"
+    },
+    "Theoretical Active Warps per SM": {
+     "value": "28",
+     "unit": "warp"
+    },
+    "Theoretical Occupancy": {
+     "value": "87.50",
+     "unit": "%"
+    },
+    "Achieved Occupancy": {
+     "value": "81.70",
+     "unit": "%"
+    },
+    "Achieved Active Warps Per SM": {
+     "value": "26.14",
+     "unit": "warp"
+    }
+   },
+   "pb_gather_cs": {
+    "dram__bytes_read.sum": {
+     "value": "1,053,968,192",
+     "unit": "byte"
+    },
+    "l1tex__data_bank_conflicts_pipe_lsu_mem_shared.sum": {
+     "value": "101,363,455",
+     "unit": ""
+    },
+    "l1tex__t_bytes.sum": {
+     "value": "911,412,832",
+     "unit": "byte"
+    },
+    "smsp__inst_executed.sum": {
+     "value": "442,159,332",
+     "unit": "inst"
+    },
+    "smsp__sass_inst_executed_op_global_ld.sum": {
+     "value": "5,752,798",
+     "unit": "inst"
+    },
+    "smsp__sass_inst_executed_op_shared_ld.sum": {
+     "value": "41,801,543",
+     "unit": "inst"
+    },
+    "smsp__thread_inst_executed_per_inst_executed.ratio": {
+     "value": "20.63",
+     "unit": ""
+    },
+    "DRAM Frequency": {
+     "value": "4,996,444,417.74",
+     "unit": "hz"
+    },
+    "SM Frequency": {
+     "value": "584,998,635.36",
+     "unit": "hz"
+    },
+    "Elapsed Cycles": {
+     "value": "11,214,343",
+     "unit": "cycle"
+    },
+    "Memory Throughput": {
+     "value": "44.77",
+     "unit": "%"
+    },
+    "DRAM Throughput": {
+     "value": "17.80",
+     "unit": "%"
+    },
+    "Duration": {
+     "value": "19,169,856",
+     "unit": "ns"
+    },
+    "L1/TEX Cache Throughput": {
+     "value": "89.53",
+     "unit": "%"
+    },
+    "L2 Cache Throughput": {
+     "value": "5.31",
+     "unit": "%"
+    },
+    "SM Active Cycles": {
+     "value": "11,207,226.85",
+     "unit": "cycle"
+    },
+    "Compute (SM) Throughput": {
+     "value": "40.59",
+     "unit": "%"
+    },
+    "Local Memory Spilling Requests": {
+     "value": "0",
+     "unit": ""
+    },
+    "Local Memory Spilling Request Overhead": {
+     "value": "no data",
+     "unit": "%"
+    },
+    "Mem Busy": {
+     "value": "44.77",
+     "unit": "%"
+    },
+    "Max Bandwidth": {
+     "value": "40.59",
+     "unit": "%"
+    },
+    "L1/TEX Hit Rate": {
+     "value": "13.52",
+     "unit": "%"
+    },
+    "L2 Hit Rate": {
+     "value": "36.51",
+     "unit": "%"
+    },
+    "Mem Pipes Busy": {
+     "value": "40.59",
+     "unit": "%"
+    },
+    "One or More Eligible": {
+     "value": "24.74",
+     "unit": "%"
+    },
+    "Issued Warp Per Scheduler": {
+     "value": "0.25",
+     "unit": ""
+    },
+    "No Eligible": {
+     "value": "75.26",
+     "unit": "%"
+    },
+    "Active Warps Per Scheduler": {
+     "value": "2.76",
+     "unit": "warp"
+    },
+    "Eligible Warps Per Scheduler": {
+     "value": "0.27",
+     "unit": "warp"
+    },
+    "Warp Cycles Per Issued Instruction": {
+     "value": "11.15",
+     "unit": "cycle"
+    },
+    "Warp Cycles Per Executed Instruction": {
+     "value": "11.18",
+     "unit": "cycle"
+    },
+    "Avg. Active Threads Per Warp": {
+     "value": "20.63",
+     "unit": ""
+    },
+    "Avg. Not Predicated Off Threads Per Warp": {
+     "value": "20.13",
+     "unit": ""
+    },
+    "Avg. Executed Instructions Per Scheduler": {
+     "value": "2,763,495.83",
+     "unit": "inst"
+    },
+    "Executed Instructions": {
+     "value": "442,159,332",
+     "unit": "inst"
+    },
+    "Avg. Issued Instructions Per Scheduler": {
+     "value": "2,771,043.76",
+     "unit": "inst"
+    },
+    "Issued Instructions": {
+     "value": "443,367,001",
+     "unit": "inst"
+    },
+    "Block Size": {
+     "value": "128",
+     "unit": ""
+    },
+    "Function Cache Configuration": {
+     "value": "CachePreferNone",
+     "unit": ""
+    },
+    "Grid Size": {
+     "value": "60,000",
+     "unit": ""
+    },
+    "Registers Per Thread": {
+     "value": "23",
+     "unit": "register/thread"
+    },
+    "Shared Memory Configuration Size": {
+     "value": "65,536",
+     "unit": "byte"
+    },
+    "Driver Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "Dynamic Shared Memory Per Block": {
+     "value": "16,896",
+     "unit": "byte/block"
+    },
+    "Static Shared Memory Per Block": {
+     "value": "0",
+     "unit": "byte/block"
+    },
+    "# SMs": {
+     "value": "40",
+     "unit": "SM"
+    },
+    "Stack Size": {
+     "value": "1,024",
+     "unit": ""
+    },
+    "Threads": {
+     "value": "7,680,000",
+     "unit": "thread"
+    },
+    "# TPCs": {
+     "value": "20",
+     "unit": ""
+    },
+    "Enabled TPC IDs": {
+     "value": "all",
+     "unit": ""
+    },
+    "Uses Green Context": {
+     "value": "0",
+     "unit": ""
+    },
+    "Waves Per SM": {
+     "value": "500",
+     "unit": ""
+    },
+    "Block Limit SM": {
+     "value": "16",
+     "unit": "block"
+    },
+    "Block Limit Registers": {
+     "value": "21",
+     "unit": "block"
+    },
+    "Block Limit Shared Mem": {
+     "value": "3",
+     "unit": "block"
+    },
+    "Block Limit Warps": {
+     "value": "8",
+     "unit": "block"
+    },
+    "Theoretical Active Warps per SM": {
+     "value": "12",
+     "unit": "warp"
+    },
+    "Theoretical Occupancy": {
+     "value": "37.50",
+     "unit": "%"
+    },
+    "Achieved Occupancy": {
+     "value": "34.49",
+     "unit": "%"
+    },
+    "Achieved Active Warps Per SM": {
+     "value": "11.04",
+     "unit": "warp"
+    }
+   }
+  },
+  "exit": 0,
+  "log": []
+ },
+ "finished_utc": "2026-11-20T02:58:53.432084+00:00",
+ "tests": {
+  "pytest_exit": 0,
+  "summary": "64 passed, 9 skipped in 44.17s"
+ }
+}

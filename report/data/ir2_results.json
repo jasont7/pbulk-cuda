@@ -185,7 +185,7 @@
     "lane_steps_baseline": 3957408,
     "lane_steps_cs": 1835094,
     "mean_warp_max_set_bits": 13.838755063920626,
-    "mean_unflipped_set_bits": 18.373
+    "mean_unflipped_set_bits": 19.14685
    },
    "codes_host_ms": 11.309897000046476,
    "raw_upload_ms": 332.2318529999393,
@@ -480,7 +480,7 @@
     "lane_steps_baseline": 17927552,
     "lane_steps_cs": 8100590,
     "mean_warp_max_set_bits": 13.45924574643543,
-    "mean_unflipped_set_bits": 18.7735
+    "mean_unflipped_set_bits": 19.49462
    },
    "codes_host_ms": 33.23141900000337,
    "raw_upload_ms": 104.66389499993056,
@@ -804,7 +804,7 @@
     "lane_steps_baseline": 80524768,
     "lane_steps_cs": 36637942,
     "mean_warp_max_set_bits": 13.559671180921626,
-    "mean_unflipped_set_bits": 17.5375
+    "mean_unflipped_set_bits": 19.707158333333332
    },
    "codes_host_ms": 84.3382110000448,
    "raw_upload_ms": 583.9964030000147,
@@ -2421,5 +2421,8 @@
  "tests": {
   "pytest_exit": 0,
   "summary": "64 passed, 9 skipped in 44.38s"
- }
+ },
+ "notes": [
+  "mean_unflipped_set_bits recounted on the host Nov 19 over every cell (the Colab run sampled the first 2,000 cells, one donor). A deterministic count from the same synthetic data, every other work_cs field reproduced exactly."
+ ]
 }

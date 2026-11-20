@@ -123,7 +123,15 @@ def complement_work(lay):
                 complement_adds=int(pc.sum() + bits.size), masked_adds=int(32 * bits.size),
                 warp_iterations=n_it, lane_steps_baseline=int(32 * n_it),
                 lane_steps_cs=int(wmax.sum() + n_it), mean_warp_max_set_bits=float(wmax.mean()) if n_it else 0.0,
-                mean_unflipped_set_bits=float(np.mean([bin(int(m)).count("1") for m in lay["mask"][:2000]])))
+                mean_unflipped_set_bits=float(_popcount(lay["mask"]).mean()))
+
+
+def _popcount(a):
+    a = a.astype(np.uint32)
+    out = np.zeros(a.size, dtype=np.int64)
+    for k in range(32):
+        out += (a >> k) & 1
+    return out
 
 
 def build_donor_layout_xp(xp, sps, X_csc, s_indptr, s_indices, codes, n_donors, K):
