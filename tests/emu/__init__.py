@@ -45,3 +45,9 @@ def gather(arrays, n_genes, n_donors, K, block=128):
     """pb_gather on the CPU. arrays from pbulk.layout.gather_arrays. Returns unnormalised float32 PB."""
     gather_launch(n_genes, n_donors, block)
     return _run("gather", arrays, n_donors * K, n_genes, block, (n_donors, K))
+
+
+def gather_variant(which, arrays, n_genes, n_donors, K, block=128):
+    """pb_gather_xr / pb_gather_fm / pb_gather_cs on the CPU ("gather_xr", "gather_fm", "gather_cs")."""
+    gather_launch(n_genes, n_donors, block)
+    return _run(which, arrays, n_donors * K, n_genes, block, (n_donors, K))

@@ -1,0 +1,120 @@
+% IR2 experiments. Numbers from report/data/ir2_results.json (Colab T4, run 2, Nov 19) and, for the first
+% attempt at idea 3, report/data/run1/ir2_results.json (run 1, same day). Tables: generated/ir2_tables.tex.
+\section{Experiments}
+\label{sec:exp}
+
+\input{generated/ir2_tables.tex}
+
+\subsection{Setup}
+
+One Colab session on a Tesla T4 (40 SMs, 320 GB/s, CUDA through CuPy 14.0.1) ran
+\file{notebooks/ir2\_colab.ipynb}, which carries a snapshot of the code, runs the unit tests (64 passed)
+and then \file{bench/ir2.py}. The three synthetic sizes are those of IR1: small (2,000 genes by 20,000
+cells, 3.2 M nonzeros), medium (4,000 by 50,000, 16.0 M) and large (8,000 by 120,000, 76.8 M), all with
+$D = K = 30$. Kernel times are CUDA-event medians of three interleaved trials of ten launches and
+include the row normalisation. Every kernel output was compared with a float64 reference before it
+was timed. All six methods passed on all sizes, with a maximum relative error of $1.3 \times 10^{-6}$.
+The complement kernel has the largest error among the gather variants ($1.2 \times 10^{-6}$ against
+$2.2 \times 10^{-7}$), as expected from computing a sum as a difference.
+
+\subsection{Idea 1: the layout on the GPU}
+
+Table~\ref{tab:layout} shows the GPU layout 12 to 15 times faster than the host code, and on every size
+its four arrays are bit-for-bit equal to the host ones. It is short of the 10 to 30 ms I estimated for
+medium (43 ms), because the estimate counted memory traffic only, while the build runs about a dozen
+library calls (sorts, binary searches, the cuSPARSE transpose) that each make a full pass over 16 million
+64-bit indices.
+
+End to end (Table~\ref{tab:e2e-medium}), the gather pipeline falls from 670 ms to 130 ms on medium, a
+5.2$\times$ gain against the 7 to 9$\times$ I predicted, and now beats the single-thread C++ reference
+(296 ms in IR1) by 2.3$\times$. It still loses to scatter (62 ms), and the breakdown says why. The layout
+is now only 38 ms. The largest stage is the copy of the raw inputs (57 ms, against 32 ms for the IR1
+arrays), because \code{GpuRaw} converts $X$ to CSC and sends $S$ as 64-bit indices, and the second
+largest is a host step I had not looked at: computing the donor code of each cell with \code{np.unique}
+over string labels (31 ms). The same pattern holds on large (Table~\ref{tab:e2e-large}), 2.58 s down to
+0.57 s, behind scatter's 0.40 s. So the idea did what it was meant to do, and the bottleneck has moved to
+data preparation that the real pipeline does not need: the R export already stores donors as integer
+factor codes, and 32-bit selection indices would halve the size of $S$.
+
+\subsection{Idea 3: fused mask stream and transposed reduction}
+
+\paragraph{The first attempt failed, and why.} In the first run the transposed reduction was written
+as a loop over the offset $o$ with an inner loop of length $o$. Both kernels that used it were
+4 to 5$\times$ \emph{slower} than the baseline (7.9 and 8.8 ms against 1.7 ms on medium). The ptxas
+report showed a 128-byte stack frame for both, exactly 32 floats: nvcc had not unrolled the nested
+loop, so \code{acc[]} was indexed at run time and moved to local memory. Nsight confirmed it. DRAM
+throughput rose from 29\% to 66\%, warp cycles per issued instruction from 10.9 to 49, while the
+instruction count fell from 161 M to 95 M. The reduction was doing what it should, and the spill was
+eating the gain. Writing each halving step as a template on a compile-time offset (\code{halve<O>})
+removed the stack frame (0 bytes, 65 registers, the same as the baseline). All numbers below are from the
+second run, with that fix.
+
+\paragraph{Results.} On small and medium the fused kernel is 1.84$\times$ and 1.42$\times$ faster than
+the IR1 gather (Table~\ref{tab:kernels}), inside the 1.4 to 2$\times$ range estimated in
+Section~\ref{sec:ideas}. The ablation separates the two parts. The transposed reduction alone
+(\code{gather\_xr}) gives 1.68$\times$ and 1.32$\times$, so most of the gain is the reduction, and the
+fused mask stream adds 9 to 15\% on top.
+
+\paragraph{A new dimension: where the instructions and bytes went.} Table~\ref{tab:ncu2} lists Nsight
+counters for one launch of each kernel on medium. The transposed reduction halves the instruction count
+(161 M to 80 M), close to the 1.8$\times$ fewer adds I predicted. Fusing the mask leaves the instruction
+count where it is but cuts the bytes the L1 handles from 656 MB to 269 MB, 2.4$\times$ less, which
+matches the claim that the dependent lookup was most of the L1 traffic. DRAM bytes read stay at about
+235 MB in all three kernels, which shows that the mask lookups had been served from cache all along.
+With both changes the kernel is no longer instruction-bound: DRAM throughput is at 70\%, against 30\%
+for the baseline, and warp cycles per instruction fall from 10.9 to 8.6. The kernel has moved most of
+the way from the SM roof to the memory roof, so further gains on this layout must come from reading
+fewer bytes per nonzero.
+
+\paragraph{Large.} On large the gain disappears: 4.92 against 4.94 ms, and \code{gather\_xr} is slower
+(6.7 ms). I cannot fully explain this from the data I have. Large timings were noisy on this shared GPU,
+with trial medians of the baseline ranging from 4.9 to 7.1 ms. In the fastest trials the fused kernel
+still led (4.27 against 4.86 ms). Two effects are plausible. Large segments are 2.4 times longer (320
+nonzeros against 133), so the reduction, which the fusion mostly fixes, is a smaller share of the
+work. And at 8 bytes per nonzero the fused kernel reads 614 MB, so its DRAM floor is about 1.9 ms,
+which leaves less room. Nsight was only run on medium, so profiling large is the first item of the next
+step.
+
+\paragraph{Block size.} Figure~\ref{fig:blocks} sweeps the block size on medium. Every gather variant is
+fastest at 64 threads, two warps per block. The fused kernel is the least sensitive (1.19 to 1.53 ms
+across the sweep), because with no dependent load each warp needs fewer others to hide its latency.
+128 threads, used everywhere else, costs 2 to 26\% depending on the kernel.
+
+\subsection{Idea 2: complement accumulation}
+
+\paragraph{The work cut is real.} Table~\ref{tab:work} counts the work from the actual layouts. The
+flip marks 643 of the 900 pseudo-bulks on medium, the set bits per cell fall from 18.8 to 8.7, and the
+adds per nonzero from 32 to 9.7, 3.3$\times$ fewer, exactly as estimated from $\mathbb{E}[\min(r,1-r)]$.
+Because a warp waits for its slowest lane, the lane steps fall by only 2.2$\times$: the mean of the
+warp-wide maximum is 13.5 set bits, against a mean of 8.7. Nsight agrees on the direction. The kernel
+executes 110 M instructions against 161 M.
+
+\paragraph{The time is worse.} Despite that, \code{gather\_cs} is 0.87$\times$, 0.51$\times$ and
+0.46$\times$ the speed of the baseline. My estimate (0.8 to 1.3$\times$) was too optimistic on medium
+and large. Table~\ref{tab:ncu2} shows three causes, in order of size.
+(1) \emph{Occupancy.} The 16.9 KB of shared accumulators per 128-thread block allow three blocks per SM,
+and achieved occupancy drops from 84\% to 34\%. With a quarter of the warps resident, the latency of the
+shared-memory read-modify-write is no longer hidden. (2) \emph{Bank conflicts.} Lanes write to rows
+chosen by their data, and Nsight counts 21.6 M bank conflicts in one launch. (3) \emph{Divergence.}
+Active threads per instruction drop slightly, from 22.4 to 21.0 out of 32, because lanes leave the \code{\_\_ffs}
+loop at different times. So the PRAM cost model is right about the work but misses what SIMT charges
+for it: a lockstep warp pays for its slowest lane, and moving accumulators out of registers trades
+arithmetic for latency.
+
+\paragraph{New ideas from this result.} The analysis points to two fixes. (a) Keep the accumulators
+in registers and use the complement only to make the masks sparser, splitting each warp's 32
+accumulators into the flipped and unflipped halves so that a loop step only visits the half with set
+bits. The work cut then survives without shared memory. (b) If shared memory stays, give each lane a
+private, conflict-free column (the read layout already is) and launch two-warp blocks, which the block
+sweep already favours. I expect (a) to matter more, because occupancy, not conflicts, is the largest
+loss.
+
+\subsection{Against a library}
+
+cuSPARSE SpGEMM through \code{cupyx} computes the same product correctly but takes 81 ms on small and
+324 ms on medium, about 210 and 270 times slower than the fused kernel, and it runs out of memory on large
+(it asked for 36 GB). A general sparse-sparse product does not know that each row of $S$ touches one
+donor or that the output is dense, so it forms and merges every partial product. The donor layout uses
+both facts, which is where the advantage over the general routine comes from. This matches the
+pseudo-bulk literature, where the step is done as a generic sparse product in R or
+Python~\cite{crowell2020,squair2021}.

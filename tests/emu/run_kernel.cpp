@@ -7,6 +7,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+extern "C" { float smem[1 << 16]; }   // the dynamic shared memory of pb_gather_cs. Warps run one at a time
 #include "../../pbulk/kernels.cu"
 
 static std::vector<char> load(const std::string& p) {
@@ -45,8 +46,9 @@ static void run_warp(unsigned block, unsigned warp, std::vector<std::vector<char
         if (n_done == 32) return;
         if (n_wait != 32) { fprintf(stderr, "warp diverged at a shuffle\n"); exit(2); }
         for (int l = 0; l < 32; ++l) {
-            if (offset[l] != offset[0]) { fprintf(stderr, "shuffle offsets differ\n"); exit(2); }
-            res[l] = (l + offset[0] < 32) ? slot[l + offset[0]] : slot[l];
+            if (offset[l] != offset[0] || xor_mode[l] != xor_mode[0]) { fprintf(stderr, "shuffles differ\n"); exit(2); }
+            if (xor_mode[0]) res[l] = slot[l ^ offset[0]];
+            else res[l] = (l + offset[0] < 32) ? slot[l + offset[0]] : slot[l];
         }
     }
 }
@@ -56,7 +58,8 @@ int main(int argc, char** argv) {
     const std::string which = argv[1], dir = argv[2];
     const int block = atoi(argv[3]), n_pb = atoi(argv[4]), n_genes = atoi(argv[5]);
     std::vector<std::vector<char>> a;
-    for (int i = 0; i < (which == "scatter" ? 5 : 4); ++i) a.push_back(load(dir + "/a" + std::to_string(i) + ".bin"));
+    const int n_in = which == "scatter" ? 5 : which == "gather_fm" ? 3 : 4;
+    for (int i = 0; i < n_in; ++i) a.push_back(load(dir + "/a" + std::to_string(i) + ".bin"));
     std::vector<float> PB((size_t)n_pb * n_genes, which == "scatter" ? 0.f : -1.f);  // gather must overwrite all of it
 
     blockDim.x = block;
@@ -64,6 +67,20 @@ int main(int argc, char** argv) {
         gridDim.x = n_pb;
         kernel = [&] { pb_scatter((const int*)a[0].data(), (const int*)a[1].data(), (const int*)a[2].data(),
                                   (const int*)a[3].data(), (const float*)a[4].data(), PB.data(), n_genes); };
+    } else if (which != "gather") {
+        const int n_donors = atoi(argv[6]), K = atoi(argv[7]), per_block = block / 32;
+        gridDim.x = (n_genes * n_donors + per_block - 1) / per_block;
+        if (which == "gather_xr")
+            kernel = [&, n_donors, K] { pb_gather_xr((const int*)a[0].data(), (const int*)a[1].data(), (const float*)a[2].data(),
+                                                     (const unsigned*)a[3].data(), PB.data(), n_genes, n_donors, K); };
+        else if (which == "gather_fm")
+            kernel = [&, n_donors, K] { pb_gather_fm((const int*)a[0].data(), (const unsigned*)a[1].data(),
+                                                     (const float*)a[2].data(), PB.data(), n_genes, n_donors, K); };
+        else if (which == "gather_cs")
+            kernel = [&, n_donors, K] { pb_gather_cs((const int*)a[0].data(), (const unsigned*)a[1].data(),
+                                                     (const float*)a[2].data(), (const unsigned*)a[3].data(),
+                                                     PB.data(), n_genes, n_donors, K); };
+        else { fprintf(stderr, "unknown kernel %s\n", which.c_str()); return 1; }
     } else {
         const int n_donors = atoi(argv[6]), K = atoi(argv[7]), per_block = block / 32;
         gridDim.x = (n_genes * n_donors + per_block - 1) / per_block;

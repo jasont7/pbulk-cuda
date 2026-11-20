@@ -1,0 +1,324 @@
+% CSC 586F Interim Report 2. Build with tectonic from report/ (see README).
+% The IR1 numbers quoted in Sections 3 and 4 come from report/data/ir1_results.json (Colab T4, Oct 13).
+% The IR2 measurements live in generated/ir2_experiments.tex, written from the IR2 results file.
+\documentclass[sigconf,nonacm]{acmart}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\newcommand{\TBD}[1]{\textcolor{red}{\textbf{TBD\if\relax\detokenize{#1}\relax\else: #1\fi}}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\file}[1]{{\urlstyle{tt}\nolinkurl{#1}}}   % file paths, may break at / and .
+
+\settopmatter{printfolios=true}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{8pt plus 2pt minus 2pt}
+\emergencystretch=1.5em
+\raggedbottom
+
+\begin{document}
+
+\title{Pseudo-Bulk RNA-seq Generation on the GPU}
+\subtitle{CSC 586F Interim Report 2, Group 19}
+\author{Jason Thomo}
+\affiliation{%
+  \institution{University of Victoria}
+  \city{Victoria}
+  \state{BC}
+  \country{Canada}}
+\email{jthomo@uvic.ca}
+
+\begin{abstract}
+Interim Report 1 built a gather kernel that computes $P$ pseudo-bulk RNA-seq profiles, the sparse
+product $PB = S X^{\top}$, in a few milliseconds on a T4. This report profiles that code and finds
+two limits. End to end, 93\% of the time is a host-side data layout step, not the kernel. Inside the
+kernel, the SM and the L1 cache are the busy units, not DRAM, because every nonzero costs a dependent
+mask lookup, 32 masked adds and a large share of warp shuffles. I propose three ideas backed by that
+analysis, estimate the gain of each, and implement them: the layout built on the GPU, a
+complement-based kernel that does less arithmetic work, and a kernel that streams a precomputed mask
+and reduces with 31 shuffles instead of 160. Code: \url{https://github.com/jasont7/pbulk-cuda}.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+Single-cell RNA sequencing gives a sparse gene-by-cell matrix. A \emph{pseudo-bulk} sums the
+expression of a set of cells to imitate a bulk tissue sample. Pseudo-bulks are the standard test data
+for cell-type deconvolution~\cite{avilacobos2020} and the standard way to run differential expression
+across donors~\cite{squair2021,crowell2020}. My research pipeline builds 900 of them from 14,378 genes
+by 241,924 cells of 30 donors with an R script that takes about 17 minutes on the Narval cluster.
+
+Interim Report 1 (IR1) gave two CUDA kernels. \code{pb\_scatter} adds every selected nonzero into the
+output with atomics. \code{pb\_gather} reorders the data so that one warp owns one (gene, donor)
+segment and adds each nonzero into $K$ register accumulators chosen by a bit mask. On synthetic data
+with the structure of the real data, gather was 15 to 40 times faster than scatter as a kernel.
+
+This report is the second milestone. Section~\ref{sec:analysis} profiles the IR1 code with Nsight
+Compute and a PRAM count. Section~\ref{sec:ideas} turns the analysis into three ideas, each with an
+estimate of its gain and its relation to the literature. Section~\ref{sec:impl} describes how they
+were built, and Section~\ref{sec:exp} measures them. All data is still synthetic.
+
+\section{Background}
+
+There are $G$ genes, $C$ cells and $D$ donors, and each cell belongs to one donor. $X$ is a sparse
+$G \times C$ matrix of CPM values with $N$ nonzeros. Each donor gets $K$ pseudo-bulks, $P = DK$ in
+total. The 0/1 selection matrix $S$ ($P \times C$) has $S[p,c] = 1$ when cell $c$ is in pseudo-bulk
+$p$, and row $p = dK + k$ only selects cells of donor $d$. Pseudo-bulk $k$ of donor $d$ draws a ratio
+$r_{dk}$ uniformly from $[0.3, 1]$ and takes $\lfloor r_{dk} n_d \rfloor$ of the donor's $n_d$ cells.
+The output is
+\begin{equation}
+PB[p,g] = \sum_{c\,:\,S[p,c]=1} X[g,c],
+\label{eq:pb}
+\end{equation}
+with each row then scaled to sum to $10^6$. The real shape is $G = 14{,}378$, $C = 241{,}924$,
+$D = K = 30$. The sum has $F = \sum_c t_c n_c$ terms, where $t_c$ is the number of pseudo-bulks that
+chose cell $c$ and $n_c$ its number of nonzeros. Because $\mathbb{E}[r] = 0.65$, $F \approx 0.65\,KN$.
+
+\paragraph{The IR1 gather layout.} \code{build\_donor\_layout} sorts cells by donor, stores $X$ by gene
+(CSR), and records \code{seg\_ptr}$[gD+d]$, the start of the nonzeros of gene $g$ that belong to donor
+$d$. $S$ becomes one 32-bit \code{mask} per cell, with bit $k$ set when the cell is in pseudo-bulk $k$
+of its donor. \code{pb\_gather} gives one warp to each of the $GD$ segments. Lane $l$ reads nonzeros
+$l, l+32, \dots$, loads the value $v$ and the mask $m = \code{mask}[\code{col}[i]]$, and for each of
+32 accumulators adds $v$ if bit $k$ of $m$ is set. A \code{\_\_shfl\_down\_sync} tree then sums each
+accumulator across the warp and lane 0 writes the $K$ results. This thread mapping is the CSR vector
+kernel of Bell and Garland~\cite{bell2008,bell2009}.
+
+\section{Analysis of the IR1 code}
+\label{sec:analysis}
+
+\subsection{Where the end-to-end time goes}
+
+IR1 timed the whole path from host arrays to the result back on the host, on the medium instance
+(4,000 genes by 50,000 cells, 16.0 million nonzeros). Gather took 548 ms, of which 510.7 ms (93\%) was
+the host layout build, about 31 ms the host-to-device copy, 1.6 to 3.1 ms the kernel and 4 ms the copy
+back. Scatter took 60 ms in total, and the single-thread C++ reference 296 ms. So the fastest kernel
+gave the slowest pipeline. The layout build grows with the input: 99 ms, 514 ms and 2,404 ms on the
+small, medium and large instances (3.2, 16.0 and 76.8 million nonzeros), while the kernel takes 1.0,
+1.7 and 5.9 ms. The layout is a NumPy and SciPy routine on one CPU core: a CSC column permutation, a
+CSC to CSR conversion, and a chunked \code{bincount} over (gene, donor) keys.
+
+\subsection{What limits the kernel}
+
+Table~\ref{tab:ncu} shows Nsight Compute's view of one \code{pb\_gather} launch on the medium
+instance. Nsight locks the SM clock at 585 MHz, which is why the duration is longer than the
+event-timed 1.7 ms.
+
+\begin{table}[t]
+\caption{Nsight Compute on \code{pb\_gather}, medium instance, Colab T4 (IR1 run).}
+\label{tab:ncu}
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+Metric & Value \\
+\midrule
+Duration (SM clock locked at 585 MHz) & 2.79 ms \\
+Compute (SM) throughput & 76.3\% \\
+L1/TEX cache throughput & 86.2\% \\
+L2 cache throughput & 25.6\% \\
+DRAM throughput & 29.2\% \\
+Registers per thread & 65 \\
+Theoretical / achieved occupancy & 87.5\% / 84.1\% \\
+Grid $\times$ block & 30,000 $\times$ 128 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Not memory bound.} DRAM runs at 29\% of its peak, so the kernel is not limited by
+bandwidth from device memory. The two busy units are the L1/TEX cache (86\%) and the SM pipelines
+(76\%). The kernel is bound by on-chip work: instructions and L1 transactions.
+
+\paragraph{The L1 traffic.} Each loop step of a warp issues three loads: \code{val} and \code{col},
+which are coalesced (32 consecutive 4-byte words, four 32-byte sectors each), and \code{mask[col[i]]},
+which depends on the second load and is scattered. Within a segment the 32 lanes read 32 cells of one
+donor in increasing order, but with 8\% density neighbouring nonzeros of a gene are about 12 cells apart,
+so the 32 mask reads span roughly 1.5 KB and touch about 48 sectors. The mask array is small
+(200 KB on medium) and stays in L2 and L1, which explains why L1 is hot while DRAM is idle. By this
+count the mask lookup is about 85\% of the L1 sectors the loop requests.
+
+\paragraph{The arithmetic.} Every nonzero is offered to all 32 accumulators, even though $K = 30$ and
+on average only 19.5 bits of a mask are set. The PRAM work of the gather strategy is
+$\Theta(KN + PG)$, against $\Theta(F + PG)$ for the sequential algorithm. The kernel does $32N$
+masked adds, 512 million on medium.
+
+\paragraph{The reduction.} After the loop, each lane holds 32 partial sums. The IR1 reduction runs five
+\code{\_\_shfl\_down\_sync} steps for each of the 32 accumulators, so all 32 lanes execute 160 shuffles
+and 160 adds per segment: 5,120 thread-adds where a reduction tree needs 992. On medium the segments
+average 133 nonzeros, only about four loop steps per lane, so the reduction is a large share of the
+work. In thread-level adds it is 614 million against the loop's 512 million. Most of those adds
+produce values that only lane 0 uses.
+
+\paragraph{Registers and occupancy.} The 32 accumulators cost 65 registers per thread. That limits a
+128-thread block to 7 resident blocks per SM (28 of 32 warps), hence the 87.5\% theoretical
+occupancy, and it rules out 1,024-thread blocks (IR1 had to cap gather blocks at 512).
+
+\paragraph{Summary.} In order of size: (1) the host layout dominates the pipeline, (2) the kernel is
+limited by instructions and L1 transactions, and those come from the dependent mask gather, the 32
+masked adds per nonzero and the 160-shuffle reduction.
+
+\section{Ideas}
+\label{sec:ideas}
+
+\subsection{Idea 1: build the layout on the GPU}
+
+\paragraph{Evidence.} The layout is 93\% of gather's end-to-end time on medium and grows to 2.4 s on
+large (Section~\ref{sec:analysis}).
+
+\paragraph{Idea.} Every step of the layout is a data-parallel primitive. (1) Permuting the columns of
+the CSC matrix by donor is a segmented gather: the new column pointer is a prefix sum of the permuted
+column lengths, and each new nonzero finds its source with a binary search. (2) CSC to CSR is a sparse
+transpose, which cuSPARSE provides~\cite{cusparse}. (3) Because cells are sorted by donor, the key
+$gD + \mathrm{donor}(c)$ is nondecreasing along the CSR arrays, so \code{seg\_ptr} is one vectorised
+binary search for the $GD+1$ boundaries, with no sort. (4) The masks are a sum of $2^k$ over the
+nonzeros of $S$. The bits of one cell are distinct, so the sum equals the bitwise OR and is exact in
+float64. The output is identical to the host layout, so the kernels need no change.
+
+\paragraph{Expected gain.} The steps touch each nonzero a small constant number of times, about 1 GB of
+memory traffic on medium, which a T4 moves in a few milliseconds at 320 GB/s~\cite{t4datasheet}. With
+library overheads I expect 10 to 30 ms instead of 511 ms on medium. The gather pipeline should then
+fall from 548 ms to about 60 to 80 ms, a 7 to 9$\times$ gain, now bounded by the host-to-device copy.
+
+\paragraph{Literature.} GPU sparse transposes and segment construction are standard building blocks
+(cuSPARSE~\cite{cusparse}, Merrill and Garland's merge-based work~\cite{merrill2016}). The idea is
+engineering, not new. The one problem-specific point is that the donor sort makes the segment keys
+sorted for free.
+
+\subsection{Idea 2: complement accumulation (less work)}
+
+\paragraph{Evidence.} The kernel is SM-bound and does $32N$ masked adds, almost half of which add zero.
+
+\paragraph{Idea.} Two changes reduce the work, not just its cost. First, a pseudo-bulk that takes more
+than half of its donor's cells is computed by its complement: $PB[p,g] = T_{gd} - \sum_{c \notin p} X[g,c]$,
+where $T_{gd}$ is the total of the segment. One extra add per nonzero, for $T_{gd}$, serves every
+complemented pseudo-bulk. A per-donor \code{flip} word marks which bits are complemented, and the
+kernel reads $m \oplus \code{flip}$. Second, a lane visits only the set bits of that word, with
+\code{\_\_ffs}, instead of all 32. The work per nonzero falls from 32 to
+$1 + \mathrm{popcount}(m \oplus \code{flip})$.
+
+\paragraph{Expected gain.} With $r \sim U(0.3, 1)$, a bit survives the flip with probability
+$q = \min(r, 1-r)$ and $\mathbb{E}[q] = 0.293$. The PRAM work falls from $\Theta(KN)$ to
+$\Theta(N(1 + \sum_k q_k))$: 9.8 adds per nonzero instead of 32, 3.3$\times$ less. A warp runs in
+lockstep, though, so each loop step costs the \emph{largest} popcount among its 32 lanes. A simulation
+of the sampling rule gives a mean popcount of 8.8 but a mean warp maximum of 13.8. Dynamic indices also
+force the accumulators out of registers into shared memory, and each add becomes a load, an add and a
+store. Counting instructions, I expect the loop to speed up by between 0.8$\times$ (a loss) and
+1.3$\times$, far below the 3.3$\times$ cut in work. The idea is worth testing because it is the only
+one of the three that changes the asymptotic work, and because the gap between the work cut and the
+time cut is itself a measurement of SIMT costs.
+
+\paragraph{Literature.} Exploiting the structure of a 0/1 matrix to share additions is old: the Four
+Russians method precomputes sums over groups of rows of a binary matrix~\cite{arlazarov1970}, and
+masked sparse products skip work outside a mask~\cite{milakovic2022}. Using a complement so that a
+dense selection costs as little as a sparse one I have not found in the pseudo-bulk or SpMV literature.
+It relies on knowing the segment total, which the donor layout provides for one add.
+
+\subsection{Idea 3: a fused mask stream and a transposed reduction}
+
+\paragraph{Evidence.} L1/TEX is at 86\%, and the scattered mask lookup makes about 85\% of the loop's L1
+sector requests. The reduction does 160 shuffles per segment and is larger than the main loop.
+
+\paragraph{Idea.} (a) \emph{Fused mask stream.} The layout stores \code{mval}$[i] = \code{mask}[\code{col}[i]]$
+next to each value. The kernel then reads two coalesced streams, \code{val} and \code{mval}, and no
+longer needs \code{col}. The bytes the kernel reads per nonzero fall from 12 (with an L1-resident
+4-byte mask lookup) to 8, and the dependent load disappears. (b) \emph{Transposed reduction.} Instead
+of reducing each accumulator separately, the warp does a recursive-halving reduce-scatter. At offset
+$o = 16, 8, 4, 2, 1$, a lane keeps the half of its live accumulators that matches bit $o$ of its lane
+index and swaps the other half with lane $l \oplus o$ through \code{\_\_shfl\_xor\_sync}. After five
+steps lane $k$ holds the full sum for pseudo-bulk $k$. That is $16+8+4+2+1 = 31$ shuffles and 31 adds
+per lane instead of 160, exactly the 992 thread-adds of a tree, and the $K$ outputs are written by $K$
+lanes in one instruction instead of $K$ serial stores by lane 0. An ablation kernel,
+\code{pb\_gather\_xr}, has (b) only.
+
+\paragraph{Expected gain.} The reduction's thread-adds fall from 614 million to 119 million on medium,
+so total adds fall from 1,126 million to 631 million, 1.8$\times$ fewer. Shuffles also cost more than
+adds, and the transposed form adds two selects per step, so I expect 1.3 to 1.6$\times$ from (b). Part
+(a) removes most of the L1 traffic. If L1 is the binding limit, the kernel moves to being purely
+instruction-bound and I expect a further 1.1 to 1.3$\times$. Together, 1.4 to 2$\times$ on the kernel.
+
+\paragraph{Literature.} Warp-level reductions with shuffles are standard~\cite{cudaguide}. The
+transposed form is the recursive-halving reduce-scatter used for MPI collectives~\cite{thakur2005},
+applied to the 32 registers of a warp. Precomputing an indirection into the stream is a common
+trade of memory for latency. I have not found it applied to pseudo-bulk generation, which so far runs
+as CPU sparse algebra in R and Python~\cite{crowell2020,squair2021}.
+
+\section{Implementation}
+\label{sec:impl}
+
+All new kernels are in \file{pbulk/kernels.cu} next to the IR1 kernels, which are unchanged. Host code is
+in \file{pbulk/gpu.py} and \file{pbulk/layout.py}, and the harness in \file{bench/}. As in IR1, kernels
+are compiled with CuPy's \code{RawModule}~\cite{okuta2017}, and each one is checked against a float64
+reference before it is timed. The kernels also run on the CPU through the IR1 warp emulator
+(\file{tests/emu}), which now models \code{\_\_shfl\_xor\_sync} and \code{\_\_ffs}, so their logic is
+tested without a GPU.
+
+\paragraph{Idea 1.} \code{build\_donor\_layout\_xp} takes the array module as a parameter. With CuPy
+and \code{cupyx.scipy.sparse} it runs on the device. With NumPy and SciPy it runs on the CPU, which is how
+the tests check that its arrays equal the host layout bit for bit. The CSC to CSR step calls cuSPARSE
+through \code{cupyx}. The donor codes of the cells are still computed on the host, which is a single
+\code{np.unique} over the cell labels.
+
+\paragraph{Idea 2.} \code{pb\_gather\_cs} keeps one warp per segment and 128-thread blocks. A lane's
+accumulators live in shared memory because their index is only known at run time. Each warp owns a
+$32 \times 33$ array of floats, row $k$ and column $l$ holding lane $l$'s sum for bit $k$, so a block
+uses 16.5 KB. The final step has lane $k$ sum row $k$. With a row stride of 32 all lanes would hit the
+same bank at once. Padding the stride to 33 puts lane $k$ in bank $(k + j) \bmod 32$ at step $j$, so the
+read is conflict-free. During accumulation the lanes write to arbitrary rows, so conflicts there depend
+on the data, which the experiments measure. The segment total $T_{gd}$ is a register reduced with five
+shuffles, and lane $k$ writes $T_{gd} - s_k$ for a flipped bit and $s_k$ otherwise. The flip words come
+from the selection counts and add $4D$ bytes.
+
+\paragraph{Idea 3.} \code{pb\_gather\_fm} reads \code{mval} instead of \code{col} and \code{mask}, and
+uses the transposed reduction. The loops over accumulators are fully unrolled with compile-time
+indices, so all 32 accumulators stay in registers through the reduction. I chose not to stage the
+masks in shared memory, which was the other way to cut L1 traffic. A block would have to hold a whole
+donor's masks, up to 32 KB at the real shape, which caps occupancy, and the segments of one block
+would have to come from one donor. The fused stream needs no shared memory and no
+\code{\_\_syncthreads()}, at the cost of 4 bytes per nonzero of device memory.
+
+\paragraph{Launch shape.} All gather variants keep 128-thread blocks. At 65 registers per thread a
+block needs 8,320 registers, so 7 blocks fit an SM. Larger blocks give the scheduler nothing extra
+because warps never cooperate across a block, except in \code{pb\_gather\_cs}, where shared memory
+(16.5 KB per block) allows at most 3 blocks per SM even with the largest 64 KB carve-out.
+
+\paragraph{Library baseline.} For comparison with a vendor library, the harness also computes
+$S X^{\top}$ as a cuSPARSE sparse-sparse product through \code{cupyx}, with $S$ as a float32 CSR
+matrix~\cite{cusparse}.
+
+\paragraph{Effort and limitations.}
+I checked every kernel against the reference and the emulator, and every number in Section~\ref{sec:exp} comes
+from two Colab runs: the failed first version of Idea 3 from the first, everything else from the second. Idea 1 was the easiest, because the primitives exist in
+CuPy. Idea 2 took the most care: the complement makes the sums the difference of two float32 values, so
+it loses a little precision when a pseudo-bulk takes nearly all of a donor's cells. Idea 3's
+transposed reduction is short but easy to get wrong in two ways. Its index logic is checked by the
+emulator tests, for every lane with $K$ of 1, 5, 17, 30 and 32 and blocks of 32 and 128 threads. Whether
+the compiler keeps the accumulators in registers only showed up on the GPU, in the first run.
+Limits: $K \le 32$ still, all data is synthetic, and every timing is on one Colab T4.
+
+\input{ir2_experiments.tex}
+
+\section{Future work}
+
+The Final Report rubric asks for inputs bigger than device memory and for tensor or RT cores.
+\begin{enumerate}
+\item \textbf{Bigger than memory.} The donor layout splits naturally by gene. Blocks of genes can be
+streamed through the device with the copy of one block overlapping the kernel of the previous one, and
+each block's output is independent.
+\item \textbf{Tensor cores.} Per donor, $PB_d = M_d X_d^{\top}$, with $M_d$ the dense $K \times n_d$
+0/1 matrix and $X_d$ the donor's $n_d \times G$ slice. The 0/1 operand is exact in FP16, so dense
+tiles of $X_d$ could go through tensor cores where the data is dense enough to pay for the zeros.
+\item \textbf{Real data.} Run everything on the real matrix exported from Narval, where uneven cells
+per donor and nonzeros per cell will make segment lengths uneven.
+\item \textbf{More than 32 pseudo-bulks per donor}, with several mask words.
+\end{enumerate}
+
+\section{Conclusion}
+
+Profiling the IR1 code showed that its pipeline was host-bound and its kernel was bound by on-chip work,
+not DRAM. The three ideas target those limits in turn: the layout on the GPU, less arithmetic through
+complements, and fewer L1 transactions and shuffles through a fused mask stream and a transposed
+reduction. Section~\ref{sec:exp} reports how far each one got.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{refs}
+
+\end{document}

@@ -13,7 +13,7 @@ import tarfile
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "notebooks" / "ir1_colab.ipynb"
 PATTERNS = ["requirements.txt", "pbulk/*.py", "pbulk/*.cu", "pbulk/*.cpp", "bench/*.py",
-            "tests/*.py", "tests/emu/*", "tests/fake_cupy/cupy/*.py"]
+            "tests/*.py", "tests/emu/*", "tests/fake_cupy/cupy/*.py", "tests/fake_cupy/cupyx/*.py", "tests/fake_cupy/cupyx/scipy/*.py"]
 
 
 def snapshot_files():

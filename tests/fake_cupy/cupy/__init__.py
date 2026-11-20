@@ -22,13 +22,16 @@ class _Kernel:
     def __init__(self, name):
         self.name = name
 
-    def __call__(self, grid, block, args):
+    def __call__(self, grid, block, args, shared_mem=0):
         from pbulk.launch import gather_launch, scatter_launch
         from tests import emu
         if self.name == "pb_scatter":
             *arrays, PB, n_genes = args
             assert len(arrays) == 5 and grid == (scatter_launch(PB.shape[0], block[0])["grid"],)
             PB += emu.scatter(arrays, PB.shape[0], int(n_genes), block[0])
+        elif self.name != "pb_gather":
+            *arrays, PB, n_genes, n_donors, K = args
+            PB[...] = emu.gather_variant(self.name[3:], arrays, int(n_genes), int(n_donors), int(K), block[0])
         else:
             *arrays, PB, n_genes, n_donors, K = args
             assert len(arrays) == 4 and PB.shape == (n_donors * K, n_genes)
@@ -41,7 +44,7 @@ class RawModule:
         assert "pb_scatter" in code and "pb_gather" in code
 
     def get_function(self, name):
-        assert name in ("pb_scatter", "pb_gather")
+        assert name in ("pb_scatter", "pb_gather", "pb_gather_xr", "pb_gather_fm", "pb_gather_cs")
         return _Kernel(name)
 
 
@@ -72,3 +75,7 @@ cuda = types.SimpleNamespace(
     get_elapsed_time=lambda a, b: (b.t - a.t) * 1e3,
     runtime=types.SimpleNamespace(getDeviceProperties=lambda i: {
         "name": b"FAKE cupy (CPU emulator, not a GPU)", "multiProcessorCount": 0, "maxThreadsDim": (0, 0, 0)}))
+
+
+def __getattr__(name):          # anything else (searchsorted, bincount, ...) is NumPy's
+    return getattr(np, name)

@@ -104,3 +104,59 @@ def device_info():
             info[k] = [int(x) for x in v]
     info["cupy"] = cp.__version__
     return info
+
+
+# ---------------------------------------------------------------------------------------------------------
+# IR2
+# ---------------------------------------------------------------------------------------------------------
+from .layout import build_donor_layout_xp  # noqa: E402
+
+_variants = {k: _mod.get_function("pb_" + k) for k in ("gather_xr", "gather_fm", "gather_cs")}
+CS_STRIDE = 33
+
+
+def variant_kernel(which, arrays, n_genes, n_donors, K, block=128, normalise=True):
+    """pb_gather_xr (arrays from gather_arrays), pb_gather_fm (fused_arrays), pb_gather_cs (complement_arrays)."""
+    launch = gather_launch(n_genes, n_donors, block)
+    PB = cp.empty((n_donors * K, n_genes), dtype=cp.float32)
+    shared = (block // 32) * 32 * CS_STRIDE * 4 if which == "gather_cs" else 0
+    _variants[which]((launch["grid"],), (block,), (*arrays, PB, np.int32(n_genes), np.int32(n_donors), np.int32(K)),
+                     shared_mem=shared)
+    return _normalise(PB) if normalise else PB
+
+
+class GpuRaw:
+    """The inputs of the GPU layout build: X as CSC, S's CSR arrays, donor code per cell, on the device."""
+
+    def __init__(self, X, S, codes):
+        import cupyx.scipy.sparse as csp
+        Xc = X.tocsc()
+        self.X = csp.csc_matrix((cp.asarray(Xc.data.astype(np.float32)), cp.asarray(Xc.indices.astype(np.int32)),
+                                 cp.asarray(Xc.indptr.astype(np.int32))), shape=Xc.shape)
+        self.s_indptr = cp.asarray(S.indptr.astype(np.int64))
+        self.s_indices = cp.asarray(S.indices.astype(np.int64))
+        self.codes = cp.asarray(codes.astype(np.int32))
+        sync()
+
+    def nbytes(self):
+        return int(self.X.data.nbytes + self.X.indices.nbytes + self.X.indptr.nbytes + self.s_indptr.nbytes
+                   + self.s_indices.nbytes + self.codes.nbytes)
+
+
+def layout_gpu(raw, n_donors, K):
+    """Idea 1: build_donor_layout on the device (cupy + cuSPARSE)."""
+    import cupyx.scipy.sparse as csp
+    return build_donor_layout_xp(cp, csp, raw.X, raw.s_indptr, raw.s_indices, raw.codes, n_donors, K)
+
+
+def cusparse_operands(X, S):
+    """Library baseline: S (CSR, float32) and X^T (CSR) on the device for cuSPARSE SpGEMM."""
+    import cupyx.scipy.sparse as csp
+    S32 = csp.csr_matrix(S.astype(np.float32))
+    XT = csp.csr_matrix(X.T.tocsr().astype(np.float32))
+    return S32, XT
+
+
+def cusparse_pb(S32, XT, normalise=True):
+    PB = (S32 @ XT).toarray()
+    return _normalise(PB) if normalise else PB
